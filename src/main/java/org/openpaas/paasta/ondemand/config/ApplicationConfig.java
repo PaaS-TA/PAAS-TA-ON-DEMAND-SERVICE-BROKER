@@ -1,42 +1,93 @@
 package org.openpaas.paasta.ondemand.config;
 
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.TrustStrategy;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+
+import org.openpaas.servicebroker.model.Catalog;
+import org.openpaas.servicebroker.model.Plan;
+import org.openpaas.servicebroker.model.ServiceDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.web.client.RestTemplate;
 
-import javax.net.ssl.SSLContext;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
+import java.util.*;
 
 @Configuration
 public class ApplicationConfig {
+
     @Bean
-    public RestTemplate restTemplate()
-            throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
-        TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
+    public Catalog catalog() {
 
-        SSLContext sslContext = org.apache.http.ssl.SSLContexts.custom()
-                .loadTrustMaterial(null, acceptingTrustStrategy)
-                .build();
+        return new Catalog(Arrays.asList(
+                new ServiceDefinition(
+                        "id",
+                        "name",
+                        "desc",
+                        true, // bindable
+                        false, // updatable
+                        Arrays.asList(
+                                new Plan("plan_id",
+                                        "plan_name",
+                                        "plan_desc",
+                                        getPlanMetadata("plan_type"))),
+                        Arrays.asList("plan_name"),
+                        getServiceDefinitionMetadata(),
+                        null,
+                        null)));
+    }
 
-        SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext);
+    private Map<String, Object> getServiceDefinitionMetadata() {
+        Map<String, Object> sdMetadata = new HashMap<String, Object>();
+        sdMetadata.put("displayName", "on-demand");
+        sdMetadata.put("imageUrl", "");
+        sdMetadata.put("longDescription", "Paas-TA On-Demand");
+        sdMetadata.put("providerDisplayName", "PaaS-TA");
+        sdMetadata.put("documentationUrl", "https://paas-ta.kr");
+        sdMetadata.put("supportUrl", "https://paas-ta.kr");
+        return sdMetadata;
+    }
 
-        CloseableHttpClient httpClient = HttpClients.custom()
-                .setSSLSocketFactory(csf)
-                .build();
 
-        HttpComponentsClientHttpRequestFactory requestFactory =
-                new HttpComponentsClientHttpRequestFactory();
+    private Map<String, Object> getPlanMetadata(String planType) {
+        Map<String, Object> planMetadata = new HashMap<>();
+        planMetadata.put("costs", getCosts(planType));
+        planMetadata.put("bullets", getBullets(planType));
 
-        requestFactory.setHttpClient(httpClient);
-        RestTemplate restTemplate = new RestTemplate(requestFactory);
-        return restTemplate;
+        return planMetadata;
+    }
+
+    private List<Map<String, Object>> getCosts(String planType) {
+        Map<String, Object> costsMap = new HashMap<>();
+        Map<String, Object> amount = new HashMap<>();
+
+        switch (planType) {
+            case "A":
+                amount.put("usd", 0.0);
+                costsMap.put("amount", amount);
+                costsMap.put("unit", "MONTHLY");
+
+                break;
+            case "B":
+                amount.put("usd", 0.0);
+                costsMap.put("amount", amount);
+                costsMap.put("unit", "MONTHLY");
+
+                break;
+            default:
+                amount.put("usd", 0.0);
+                costsMap.put("amount", amount);
+                costsMap.put("unit", "MONTHLY");
+                break;
+        }
+
+        return Collections.singletonList(costsMap);
+    }
+
+    /**
+     * Plan의 Bullets 정보를 담은 객체를 반환
+     * @param planType
+     * @return List:String
+     */
+    private List<String> getBullets(String planType) {
+
+        return Arrays.asList("dedicate",
+                "dedicate");
     }
 }
