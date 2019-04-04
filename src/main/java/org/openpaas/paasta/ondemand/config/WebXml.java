@@ -1,9 +1,7 @@
 package org.openpaas.paasta.ondemand.config;
 
-import org.openpaas.paasta.ondemand.OnDemandApplication;
-
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 
 
 /**
