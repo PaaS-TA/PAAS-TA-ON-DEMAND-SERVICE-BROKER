@@ -77,7 +77,7 @@ public class OnDemandInstanceService implements ServiceInstanceService {
                     return jpaServiceInstance;
                 }
             }
-            logger.info(deployment_name + "LOCK CHECKING!!!");
+            logger.info("LOCK CHECKING!!!");
             //여기 지나치면 무조건 생성또는 시작해야하기 때문에 deployment 작업 여부 조회해야함
             if(onDemandDeploymentService.getLock(deployment_name)){
                 throw new ServiceBrokerException(deployment_name + "is Working");
@@ -188,14 +188,13 @@ public class OnDemandInstanceService implements ServiceInstanceService {
 
     @Override
     public JpaServiceInstance getOperationServiceInstance(String Instanceid) {
-        if(onDemandDeploymentService.runningTask(deployment_name)){
-            JpaServiceInstance instance = new JpaServiceInstance();
+        JpaServiceInstance instance = jpaServiceInstanceRepository.findByServiceInstanceId(Instanceid);
+        if(onDemandDeploymentService.runningTask(deployment_name, instance)){
             List<DeploymentInstance> deploymentInstances = onDemandDeploymentService.getVmInstance(deployment_name,instance_name);
             List<DeploymentInstance> startedDeploymentInstances = deploymentInstances.stream().filter((x) -> x.getState().equals(job_started) && x.getJobState().equals("running")).collect(Collectors.toList());
             for(DeploymentInstance dep : startedDeploymentInstances){
                 logger.info(dep.getId());
                 if(!jpaServiceInstanceRepository.existsAllByVmInstanceId(dep.getId())){
-                    instance = jpaServiceInstanceRepository.findByServiceInstanceId(Instanceid);
                     instance.setVmInstanceId(dep.getId());
                     jpaServiceInstanceRepository.save(instance);
                 }

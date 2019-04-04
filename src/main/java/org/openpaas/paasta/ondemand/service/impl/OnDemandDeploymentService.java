@@ -44,9 +44,7 @@ public class OnDemandDeploymentService {
             List<DeploymentInstance> deploymentInstances = new ArrayList<DeploymentInstance>();
                 Thread.sleep(2000);
                 List<Map> results = boshDirector.getResultRetrieveTasksLog(tasks);
-                logger.info(results.toString());
                 for (Map map : results) {
-                    logger.info(map.toString());
                     if (map.get("job_name").equals(instance_name)) {
                         DeploymentInstance deploymentInstance = new DeploymentInstance(map);
                         deploymentInstances.add(deploymentInstance);
@@ -54,7 +52,6 @@ public class OnDemandDeploymentService {
                 }
             return deploymentInstances;
         }catch (Exception e){
-           logger.info(e.getMessage());
             return null;
         }
     }
@@ -75,7 +72,6 @@ public class OnDemandDeploymentService {
                 return false;
             }
         }catch (Exception e){
-            logger.error(e.getMessage());
         }
         return false;
     }
@@ -86,21 +82,22 @@ public class OnDemandDeploymentService {
                 boshDirector.updateInstanceState(deployment_name, instance_name, instance_id, type);
             }
         }catch (Exception e){
-            logger.error(e.getMessage());
         }
     }
 
-    public boolean runningTask(String deployment_name){
+    public boolean runningTask(String deployment_name, JpaServiceInstance instance){
         try {
                 List<Map> deployTask = boshDirector.getListRunningTasks();
                 List<Map> running_deployTask = deployTask.stream().filter(r -> r.get("deployment").equals(deployment_name)).collect(Collectors.toList());
-                if(running_deployTask.isEmpty()){
-                    logger.info("IsEmpty");
-                    return true;
+                if(!running_deployTask.isEmpty()) {
+                    if(instance.getTaskId() == null) {
+                        instance.setTaskId(running_deployTask.get(0).get("id").toString());
+                        jpaServiceInstanceRepository.save(instance);
+                    }
+                    running_deployTask = running_deployTask.stream().filter(r -> r.get("id").equals(instance.getTaskId())).collect(Collectors.toList());
                 }
-                   return false;
+                return running_deployTask.isEmpty();
         }catch (Exception e){
-            logger.error(e.getMessage());
             return false;
         }
     }
@@ -112,10 +109,8 @@ public class OnDemandDeploymentService {
             if(running_deployTask.isEmpty()) {
                 return null;
             }
-            logger.info("비어있지 않아요");
             return running_deployTask.get(0).get("id").toString();
         }catch (Exception e){
-            logger.error(e.getMessage());
             return null;
         }
     }
