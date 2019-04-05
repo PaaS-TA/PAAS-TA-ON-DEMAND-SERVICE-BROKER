@@ -1,0 +1,36 @@
+server:
+  port:
+
+bosh:
+  client_id:
+  client_secret:
+  url:
+  oauth_url:
+  deployment_name:
+  instance_name:
+
+spring:
+  application:
+    name: paas-ta-on-demand-broker
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: "jdbc:mysql://localhost:3306/on-demand?autoReconnect=true&useUnicode=true&characterEncoding=utf8"
+    username: root
+    password: Paasta@2019
+  jpa:
+    hibernate:
+      ddl-auto: none
+      database: mysql
+      show-sql: true
+
+serviceDefinition:
+  id: 54e2de61-de84-4b9c-afc3-88d08aadfcb6
+  name: redis
+  desc: "A paasta source control service for application development.provision parameters : parameters {owner : owner}"
+  bindable: true
+  planupdatable: false
+  plan1:
+    id: 2a26b717-b8b5-489c-8ef1-02bcdc445720
+    name: dedicated-vm
+    desc: Redis service to provide a key-value store
+    type: A
