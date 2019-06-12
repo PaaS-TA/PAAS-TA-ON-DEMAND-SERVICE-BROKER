@@ -1,7 +1,9 @@
 package org.openpaas.paasta.ondemand.service.impl;
 
 
-
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openpaas.paasta.bosh.director.BoshDirector;
 import org.openpaas.paasta.ondemand.exception.OndemandServiceException;
 import org.openpaas.paasta.ondemand.model.DeploymentInstance;
@@ -16,9 +18,12 @@ import org.slf4j.LoggerFactory;
 import org.openpaas.servicebroker.service.ServiceInstanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -33,11 +38,20 @@ public class OnDemandInstanceService implements ServiceInstanceService {
 
     @Value("${bosh.deployment_name}")
     public String deployment_name;
+
     @Value("${bosh.instance_name}")
     public String instance_name;
 
-    private String job_started = "started";
-    private String job_detached = "detached";
+    @Value("${serviceDefinition.org_limitation}")
+    public int org_limitation;
+
+    @Value("${serviceDefinition.space_limitation}")
+    public int space_limitation;
+
+    private int unlimited = -1;
+
+    ObjectMapper objectMapper = new ObjectMapper();
+
     ReentrantLock lock = new ReentrantLock();
     @Autowired
     OnDemandDeploymentService onDemandDeploymentService;
@@ -45,59 +59,47 @@ public class OnDemandInstanceService implements ServiceInstanceService {
     @Autowired
     JpaServiceInstanceRepository jpaServiceInstanceRepository;
 
+    @Autowired
+    CloudFoundryService cloudFoundryService;
+
     @Override
     public JpaServiceInstance createServiceInstance(CreateServiceInstanceRequest request) throws ServiceBrokerException {
+        logger.info("name : " + deployment_name);
+        logger.info("name : " + instance_name);
         JpaServiceInstance jpaServiceInstance = new JpaServiceInstance(request);
         jpaServiceInstanceRepository.save(jpaServiceInstance);
         try {
-            logger.info("name : " + deployment_name);
-            logger.info("name : " + instance_name);
-            List<DeploymentInstance> deploymentInstances = onDemandDeploymentService.getVmInstance(deployment_name,instance_name);
-            if(deploymentInstances == null){
-                throw new ServiceBrokerException(deployment_name + "is Working");
+            if (jpaServiceInstanceRepository.findAllByOrganizationGuid(request.getOrganizationGuid()).size() > org_limitation && org_limitation != unlimited) {
+                throw new OndemandServiceException("Currently, only " + org_limitation + " service instances can be created in this organization.");
             }
-            List<DeploymentInstance> startedDeploymentInstances = deploymentInstances.stream().filter((x) -> x.getState().equals(job_started) && x.getJobState().equals("running")).collect(Collectors.toList());
-//            for(DeploymentInstance dep : startedDeploymentInstances){
-//                if(jpaServiceInstanceRepository.findByVmInstanceIdAndOrganizationGuid(dep.getId(),request.getOrganizationGuid()) == null && jpaServiceInstanceRepository.findByVmInstanceIdAndOrganizationGuid("preparing",request.getOrganizationGuid()) == null){
-//                    jpaServiceInstance.setVmInstanceId(dep.getId());
-//                    jpaServiceInstance.setDashboardUrl(dep.getIps().substring(1,dep.getIps().length()-1));
-//                    jpaServiceInstanceRepository.save(jpaServiceInstance);
-//                    jpaServiceInstance.withAsync(false);
-//                    logger.info("서비스 인스턴스 생성");
-//                    return jpaServiceInstance;
-//                }
-//            }
-            for(DeploymentInstance dep : startedDeploymentInstances){
-                if(jpaServiceInstanceRepository.findByVmInstanceId(dep.getId()) == null){
-                    jpaServiceInstance.setVmInstanceId(dep.getId());
-                    jpaServiceInstance.setDashboardUrl(dep.getIps().substring(1,dep.getIps().length()-1));
-                    jpaServiceInstanceRepository.save(jpaServiceInstance);
-                    jpaServiceInstance.withAsync(false);
-                    logger.info("서비스 인스턴스 생성");
-                    return jpaServiceInstance;
-                }
+            if (jpaServiceInstanceRepository.findAllBySpaceGuid(request.getSpaceGuid()).size() > space_limitation && space_limitation != unlimited) {
+                throw new OndemandServiceException("Currently, only " + space_limitation + " service instances can be created in this space.");
+            }
+            List<DeploymentInstance> deploymentInstances = onDemandDeploymentService.getVmInstance(deployment_name, instance_name);
+            if (deploymentInstances == null) {
+                throw new ServiceBrokerException(deployment_name + "is Working");
             }
             logger.info("LOCK CHECKING!!!");
             //여기 지나치면 무조건 생성또는 시작해야하기 때문에 deployment 작업 여부 조회해야함
-            if(onDemandDeploymentService.getLock(deployment_name)){
+            if (onDemandDeploymentService.getLock(deployment_name)) {
                 throw new ServiceBrokerException(deployment_name + "is Working");
             }
-            List<DeploymentInstance> detachedDeploymentInstances = deploymentInstances.stream().filter(x -> x.getState().equals(job_detached)).collect(Collectors.toList());
+            List<DeploymentInstance> detachedDeploymentInstances = deploymentInstances.stream().filter(x -> x.getState().equals(BoshDirector.INSTANCE_STATE_DETACHED)).collect(Collectors.toList());
             String taskID = "";
-            for(DeploymentInstance dep : detachedDeploymentInstances){
+            for (DeploymentInstance dep : detachedDeploymentInstances) {
                 onDemandDeploymentService.updateInstanceState(deployment_name, instance_name, dep.getId(), BoshDirector.INSTANCE_STATE_START);
-                while(true){
+                while (true) {
                     Thread.sleep(1000);
                     taskID = onDemandDeploymentService.getTaskID(deployment_name);
-                    if(taskID != null){
-                        logger.info("taskID : "+ taskID);
+                    if (taskID != null) {
+                        logger.info("taskID : " + taskID);
                         break;
                     }
                 }
-                String ips ="";
-                while(true) {
+                String ips = "";
+                while (true) {
                     ips = onDemandDeploymentService.getStartInstanceIPS(taskID, instance_name, dep.getId());
-                    if(ips != null){
+                    if (ips != null) {
                         break;
                     }
                     Thread.sleep(1000);
@@ -110,24 +112,33 @@ public class OnDemandInstanceService implements ServiceInstanceService {
             }
 
             onDemandDeploymentService.createInstance(deployment_name, instance_name);
-            while(true){
+            while (true) {
                 Thread.sleep(1000);
                 taskID = onDemandDeploymentService.getTaskID(deployment_name);
-                if(taskID != null){
-                    logger.info("taskID : "+ taskID);
+                if (taskID != null) {
+                    logger.info("taskID : " + taskID);
                     break;
                 }
             }
-            String ips ="";
-            while(true) {
+            String ips = "";
+            while (true) {
                 ips = onDemandDeploymentService.getUpdateInstanceIPS(taskID);
-                if(ips != null){
+                if (ips != null) {
+                    break;
+                }
+                Thread.sleep(1000);
+
+            }
+            String instanceId = "";
+            while (true) {
+                instanceId = onDemandDeploymentService.getUpdateVMInstanceID(taskID, instance_name);
+                if (instanceId != null) {
                     break;
                 }
                 Thread.sleep(1000);
             }
             jpaServiceInstance.setDashboardUrl(ips);
-            jpaServiceInstance.setVmInstanceId("preparing");
+            jpaServiceInstance.setVmInstanceId(instanceId);
             jpaServiceInstanceRepository.save(jpaServiceInstance);
             jpaServiceInstance.withAsync(true);
             return jpaServiceInstance;
@@ -137,31 +148,29 @@ public class OnDemandInstanceService implements ServiceInstanceService {
     }
 
     @Override
-    public ServiceInstance  updateServiceInstance(UpdateServiceInstanceRequest request)  throws ServiceInstanceUpdateNotSupportedException, ServiceBrokerException, ServiceInstanceDoesNotExistException {
-        logger.info("=====================================================================");
-        logger.info("update instance"+ request.toString());
-        logger.info("=====================================================================");
-
-        throw new OndemandServiceException("Not Supported");
+    public ServiceInstance updateServiceInstance(UpdateServiceInstanceRequest request) throws ServiceInstanceUpdateNotSupportedException, ServiceBrokerException, ServiceInstanceDoesNotExistException {
+        JpaServiceInstance jpaServiceInstance = new JpaServiceInstance(request);
+        return jpaServiceInstance;
     }
 
     @Override
     public ServiceInstance deleteServiceInstance(DeleteServiceInstanceRequest request) {
-        logger.info("delete service_instance : " + request.getServiceInstanceId());
         JpaServiceInstance instance = jpaServiceInstanceRepository.findByServiceInstanceId(request.getServiceInstanceId());
-        logger.info(instance.getVmInstanceId());
         jpaServiceInstanceRepository.delete(instance);
-        if(instance.getVmInstanceId() != null && !jpaServiceInstanceRepository.existsAllByVmInstanceId(instance.getVmInstanceId())){
+        if (instance.getVmInstanceId() != null && !jpaServiceInstanceRepository.existsAllByVmInstanceId(instance.getVmInstanceId())) {
             ExecutorService executor = Executors.newSingleThreadExecutor();
             CompletableFuture.runAsync(() -> {
-                logger.info("****************락 확인*****************");
                 lock.lock();
-                logger.info("****************락 진입*****************");
-                while(true){
-                    if(jpaServiceInstanceRepository.existsAllByVmInstanceId(instance.getVmInstanceId())){
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                while (true) {
+                    if (jpaServiceInstanceRepository.existsAllByVmInstanceId(instance.getVmInstanceId())) {
                         break;
                     }
-                    if(onDemandDeploymentService.getLock(deployment_name)){
+                    if (onDemandDeploymentService.getLock(deployment_name)) {
                         try {
                             Thread.sleep(15000);
                         } catch (InterruptedException e) {
@@ -171,11 +180,11 @@ public class OnDemandInstanceService implements ServiceInstanceService {
                     }
                     onDemandDeploymentService.updateInstanceState(deployment_name, instance_name, instance.getVmInstanceId(), BoshDirector.INSTANCE_STATE_DETACHED);
                     logger.info("VM DETACHED SUCCEED : VM_ID : " + instance.getVmInstanceId());
+
                     break;
                 }
-                logger.info("****************락 언락*****************");
                 lock.unlock();
-            },executor);
+            }, executor);
 
         }
         return instance;
@@ -189,16 +198,27 @@ public class OnDemandInstanceService implements ServiceInstanceService {
     @Override
     public JpaServiceInstance getOperationServiceInstance(String Instanceid) {
         JpaServiceInstance instance = jpaServiceInstanceRepository.findByServiceInstanceId(Instanceid);
-        if(onDemandDeploymentService.runningTask(deployment_name, instance)){
-            List<DeploymentInstance> deploymentInstances = onDemandDeploymentService.getVmInstance(deployment_name,instance_name);
-            List<DeploymentInstance> startedDeploymentInstances = deploymentInstances.stream().filter((x) -> x.getState().equals(job_started) && x.getJobState().equals("running")).collect(Collectors.toList());
-            for(DeploymentInstance dep : startedDeploymentInstances){
-                logger.info(dep.getId());
-                if(!jpaServiceInstanceRepository.existsAllByVmInstanceId(dep.getId())){
-                    instance.setVmInstanceId(dep.getId());
-                    jpaServiceInstanceRepository.save(instance);
+        if (onDemandDeploymentService.runningTask(deployment_name, instance)) {
+            logger.info("인스턴스 생성완료");
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            CompletableFuture.runAsync(() -> {
+                try {
+                    if (instance.getAppGuid() != null) {
+                        Thread.sleep(10000);
+                        cloudFoundryService.ServiceInstanceAppBinding(instance.getAppGuid(), instance.getServiceInstanceId(), (Map) this.objectMapper.readValue(instance.getApp_parameter(), Map.class));
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (JsonParseException e) {
+                    e.printStackTrace();
+                } catch (JsonMappingException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            }
+
+
+            }, executor);
             return instance;
         }
         logger.info("인스턴스 생성중");

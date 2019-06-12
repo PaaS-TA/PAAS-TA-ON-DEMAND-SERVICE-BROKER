@@ -14,10 +14,13 @@ import java.util.List;
  */
 
 @Repository
-public interface JpaServiceInstanceRepository extends JpaRepository<JpaServiceInstance, String>{
-    JpaServiceInstance findByOrganizationGuid(String organizationId);
+public interface JpaServiceInstanceRepository extends JpaRepository<JpaServiceInstance, String> {
 
-    JpaServiceInstance findByVmInstanceIdAndOrganizationGuid(String vmInstanceId,String organizationId);
+    List<JpaServiceInstance> findAllByOrganizationGuid(String organizationId);
+
+    List<JpaServiceInstance> findAllBySpaceGuid(String spaceId);
+
+    JpaServiceInstance findByVmInstanceIdAndOrganizationGuid(String vmInstanceId, String organizationId);
 
     boolean existsByOrganizationGuid(String organizationId);
 
@@ -25,13 +28,13 @@ public interface JpaServiceInstanceRepository extends JpaRepository<JpaServiceIn
 
     JpaServiceInstance findByServiceInstanceId(String serviceInstanceId);
 
-    List<JpaServiceInstance> findByUseYn(String use_yn);
-
     JpaServiceInstance findByDashboardUrl(String dashboardurl);
 
     JpaServiceInstance findByVmInstanceId(String vmInstanceId);
 
     boolean existsAllByVmInstanceId(String vmInstanceId);
+
+    boolean existsAllByDashboardUrl(String dashboardUrl);
 
     JpaServiceInstance findByServiceInstanceIdAndDashboardUrl(String serviceInstanceId, String dashboardUrl);
 

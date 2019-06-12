@@ -26,12 +26,12 @@ public class OnDemandInstanceServiceBinding implements ServiceInstanceBindingSer
 
     @Override
     public ServiceInstanceBinding createServiceInstanceBinding(CreateServiceInstanceBindingRequest request) {
-        Map<String,Object> credentials = new HashMap<String,Object>();
+        Map<String, Object> credentials = new HashMap<String, Object>();
         JpaServiceInstance instance = jpaServiceInstanceRepository.findByServiceInstanceId(request.getServiceInstanceId());
         credentials = request.getParameters();
         credentials.put("host", instance.getDashboardUrl());
         ServiceInstanceBinding serviceInstanceBinding = new ServiceInstanceBinding(request.getBindingId(), request.getServiceInstanceId(), credentials, null, request.getAppGuid());
-       return serviceInstanceBinding;
+        return serviceInstanceBinding;
     }
 
     @Override

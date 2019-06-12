@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.openpaas.servicebroker.model.*;
 
 import javax.persistence.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 @Entity
@@ -53,17 +55,22 @@ public class JpaServiceInstance extends ServiceInstance {
     private String vmInstanceId;
 
     @JsonSerialize
-    @JsonProperty("use_yn")
-    @Column(name = "use_yn")
-    private String useYn;
+    @JsonProperty("app_guid")
+    @Column(name = "app_guid")
+    private String appGuid;
 
     @JsonSerialize
     @JsonProperty("task_id")
     @Column(name = "task_id")
     private String taskId;
 
+    @JsonSerialize
+    @JsonProperty("app_parameter")
+    @Column(name = "app_parameter")
+    private String app_parameter;
 
-    public JpaServiceInstance(){
+
+    public JpaServiceInstance() {
         super();
     }
 
@@ -74,9 +81,25 @@ public class JpaServiceInstance extends ServiceInstance {
         setOrganizationGuid(request.getOrganizationGuid());
         setSpaceGuid(request.getSpaceGuid());
         setServiceInstanceId(request.getServiceInstanceId());
+        AtomicReference<String> param = new AtomicReference<>("{");
+        AtomicInteger i = new AtomicInteger(1);
+        if (request.getParameters() != null) {
+            request.getParameters().forEach((key, value) -> {
+                if (key.equals("app_guid")) {
+                    setAppGuid(value.toString());
+                }
+                param.set(param.get() + "\"" + key + "\":\"" + value.toString() + "\"");
+                if (i.get() < request.getParameters().size()) {
+                    param.set(param.get() + ",");
+                }
+                i.set(i.get() + 1);
+            });
+        }
+        param.set(param.get() + "}");
+        setApp_parameter(param.get());
     }
 
-    public JpaServiceInstance(DeleteServiceInstanceRequest request){
+    public JpaServiceInstance(DeleteServiceInstanceRequest request) {
         super(request);
 
         setServiceDefinitionId(request.getServiceId());
@@ -103,12 +126,12 @@ public class JpaServiceInstance extends ServiceInstance {
         this.dashboardUrl = dashboardUrl;
     }
 
-    public String getUseYn() {
-        return useYn;
+    public String getAppGuid() {
+        return appGuid;
     }
 
-    public void setUseYn(String useYn) {
-        this.useYn = useYn;
+    public void setAppGuid(String appGuid) {
+        this.appGuid = appGuid;
     }
 
     public String getTaskId() {
@@ -194,6 +217,15 @@ public class JpaServiceInstance extends ServiceInstance {
         return this;
     }
 
+
+    public String getApp_parameter() {
+        return app_parameter;
+    }
+
+    public void setApp_parameter(String app_parameter) {
+        this.app_parameter = app_parameter;
+    }
+
     @Override
     public String toString() {
         return "JpaServiceInstance{" +
@@ -205,7 +237,7 @@ public class JpaServiceInstance extends ServiceInstance {
                 ", dashboardUrl='" + dashboardUrl + '\'' +
                 ", async=" + async +
                 ", vmInstanceId='" + vmInstanceId + '\'' +
-                ", useYn='" + useYn + '\'' +
+                ", appGuid='" + appGuid + '\'' +
                 ", taskId='" + taskId + '\'' +
                 '}';
     }

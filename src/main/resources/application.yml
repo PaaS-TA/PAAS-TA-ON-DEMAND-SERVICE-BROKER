@@ -1,13 +1,13 @@
 server:
-  port:
+  port: 8080
 
 bosh:
-  client_id:
+  client_id: admin
   client_secret:
-  url:
-  oauth_url:
-  deployment_name:
-  instance_name:
+  url: https://localhost:25555
+  oauth_url: https://localhost:8443
+  deployment_name: on-demand-service-broker
+  instance_name: redis
 
 spring:
   application:
@@ -16,7 +16,7 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     url: "jdbc:mysql://localhost:3306/on-demand?autoReconnect=true&useUnicode=true&characterEncoding=utf8"
     username: root
-    password: Paasta@2019
+    password:
   jpa:
     hibernate:
       ddl-auto: none
@@ -29,8 +29,25 @@ serviceDefinition:
   desc: "A paasta source control service for application development.provision parameters : parameters {owner : owner}"
   bindable: true
   planupdatable: false
+  bullet:
+    name: 100
+    desc: 100
   plan1:
     id: 2a26b717-b8b5-489c-8ef1-02bcdc445720
     name: dedicated-vm
     desc: Redis service to provide a key-value store
     type: A
+  org_limitation: 1
+  space_limitation: 1
+
+cloudfoundry:
+  cc:
+    api:
+      url:  # YOUR API URL
+      uaaUrl:  # YOUR UAA API URL
+      sslSkipValidation: true
+  user:
+    admin:
+      username: admin # YOUR CF ADMIN ACCOUT
+      password:  # YOUR CF ADMIN PASSWORD
+

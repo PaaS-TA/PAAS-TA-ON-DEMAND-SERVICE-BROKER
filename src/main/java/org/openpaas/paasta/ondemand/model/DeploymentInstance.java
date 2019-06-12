@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class DeploymentInstance {
 
-    public DeploymentInstance(Map map){
+    public DeploymentInstance(Map map) {
         this.id = nullCheck(map.get("id"));
         this.vmCid = nullCheck(map.get("vm_cid"));
         this.diskCid = nullCheck(map.get("disk_cid"));
@@ -20,7 +20,7 @@ public class DeploymentInstance {
     public DeploymentInstance() {
     }
 
-    private String nullCheck(Object object){
+    private String nullCheck(Object object) {
         return object == null ? null : object.toString();
     }
 
