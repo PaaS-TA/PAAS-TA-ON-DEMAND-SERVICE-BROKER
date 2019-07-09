@@ -9,6 +9,9 @@ import org.openpaas.paasta.ondemand.config.TokenGrantTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.Calendar;
+import java.util.Date;
+
 public class Common {
 
     @Value("${cloudfoundry.cc.api.url}")
@@ -27,25 +30,11 @@ public class Common {
     public String adminPassword;
 
     @Autowired
-    DefaultConnectionContext connectionContext;
+    PaastaConnectionContext paastaConnectionContext;
 
     @Autowired
-    PasswordGrantTokenProvider tokenProvider;
+    PaastaTokenContext paastaTokenContext;
 
-    /**
-     * ReactorCloudFoundryClient 생성하여, 반환한다.
-     *
-     * @param connectionContext
-     * @param tokenProvider
-     * @return DefaultCloudFoundryOperations
-     */
-    public ReactorCloudFoundryClient cloudFoundryClient(ConnectionContext connectionContext, TokenProvider tokenProvider) {
-        return ReactorCloudFoundryClient.builder().connectionContext(connectionContext).tokenProvider(tokenProvider).build();
-    }
-
-    public ReactorCloudFoundryClient cloudFoundryClient(TokenProvider tokenProvider) {
-        return ReactorCloudFoundryClient.builder().connectionContext(connectionContext()).tokenProvider(tokenProvider).build();
-    }
 
     public ReactorCloudFoundryClient cloudFoundryClient() {
         return ReactorCloudFoundryClient.builder().connectionContext(connectionContext()).tokenProvider(tokenProvider()).build();
@@ -58,9 +47,26 @@ public class Common {
      * @return DefaultConnectionContext
      */
     public DefaultConnectionContext connectionContext() {
-        return connectionContext;
+        if (paastaConnectionContext == null) {
+            paastaConnectionContext = new PaastaConnectionContext(defaultConnectionContextBuild(apiTarget, cfskipSSLValidation), new Date());
+        } else {
+            if (paastaConnectionContext.getCreate_time() != null) {
+                if(ContextAndTokenTimeOut(paastaConnectionContext, 10)) {
+                    paastaConnectionContext.getConnectionContext().dispose();
+                    paastaConnectionContext = null;
+                    paastaConnectionContext = new PaastaConnectionContext(defaultConnectionContextBuild(apiTarget, cfskipSSLValidation), new Date());
+                }
+            } else {
+                paastaConnectionContext = null;
+                paastaConnectionContext = new PaastaConnectionContext(defaultConnectionContextBuild(apiTarget, cfskipSSLValidation), new Date());
+            }
+        }
+        return paastaConnectionContext.getConnectionContext();
     }
 
+    public DefaultConnectionContext defaultConnectionContextBuild(String cfApiUrl, boolean cfskipSSLValidation) {
+        return DefaultConnectionContext.builder().apiHost(cfApiUrl.replace("https://", "").replace("http://", "")).skipSslValidation(cfskipSSLValidation).keepAlive(true).build();
+    }
 
     /**
      * TokenGrantTokenProvider 생성하여, 반환한다.
@@ -80,11 +86,19 @@ public class Common {
     }
 
     public PasswordGrantTokenProvider tokenProvider() {
-        if (tokenProvider == null) {
-            tokenProvider = PasswordGrantTokenProvider.builder().password(adminPassword).username(adminUserName).build();
+        if (paastaTokenContext == null) {
+            paastaTokenContext = new PaastaTokenContext(PasswordGrantTokenProvider.builder().password(adminPassword).username(adminUserName).build(), new Date());
+        } else if(paastaTokenContext.getCreate_time() != null && ContextAndTokenTimeOut(paastaTokenContext, 5)){
+            paastaTokenContext = new PaastaTokenContext(PasswordGrantTokenProvider.builder().password(adminPassword).username(adminUserName).build(), new Date());
         }
-        return tokenProvider;
+        return paastaTokenContext.tokenProvider();
     }
 
-
+    private boolean ContextAndTokenTimeOut(PaastaContextInterface paastaContextInterface, int timelimit){
+        Calendar now = Calendar.getInstance();
+        Calendar create_time = Calendar.getInstance();
+        create_time.setTime(paastaContextInterface.getCreate_time());
+        create_time.add(Calendar.MINUTE, timelimit);
+        return create_time.getTimeInMillis() < now.getTimeInMillis();
+    }
 }
