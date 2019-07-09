@@ -3,20 +3,26 @@ package org.openpaas.paasta.ondemand.config;
 
 import org.cloudfoundry.reactor.DefaultConnectionContext;
 import org.cloudfoundry.reactor.tokenprovider.PasswordGrantTokenProvider;
+import org.openpaas.paasta.ondemand.common.Common;
+import org.openpaas.paasta.ondemand.common.PaastaConnectionContext;
+import org.openpaas.paasta.ondemand.common.PaastaTokenContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Date;
 
 @Configuration
 public class CloudFoundryConfigProvider {
 
     @Bean
-    DefaultConnectionContext connectionContext(@Value("${cloudfoundry.cc.api.url}") String apiTarget, @Value("${cloudfoundry.cc.api.sslSkipValidation}") Boolean sslSkipValidation) {
-        return DefaultConnectionContext.builder().apiHost(apiTarget.replace("https://", "").replace("http://", "")).skipSslValidation(sslSkipValidation).keepAlive(true).build();
+    PaastaConnectionContext connectionContext(@Value("${cloudfoundry.cc.api.url}") String apiTarget, @Value("${cloudfoundry.cc.api.sslSkipValidation}") Boolean sslSkipValidation) {
+        Common common = new Common();
+        return new PaastaConnectionContext(common.defaultConnectionContextBuild(apiTarget, sslSkipValidation), new Date());
     }
 
     @Bean
-    PasswordGrantTokenProvider tokenProvider(@Value("${cloudfoundry.user.admin.username}") String username, @Value("${cloudfoundry.user.admin.password}") String password) {
-        return PasswordGrantTokenProvider.builder().password(password).username(username).build();
+    PaastaTokenContext tokenProvider(@Value("${cloudfoundry.user.admin.username}") String username, @Value("${cloudfoundry.user.admin.password}") String password) {
+        return new PaastaTokenContext(PasswordGrantTokenProvider.builder().password(password).username(username).build(), new Date());
     }
 }

@@ -79,6 +79,18 @@ public class OnDemandInstanceService implements ServiceInstanceService {
             if (deploymentInstances == null) {
                 throw new ServiceBrokerException(deployment_name + "is Working");
             }
+            List<DeploymentInstance> startedDeploymentInstances = deploymentInstances.stream().filter((x) -> x.getState().equals(BoshDirector.INSTANCE_STATE_START) && x.getJobState().equals("running")).collect(Collectors.toList());
+            for(DeploymentInstance dep : startedDeploymentInstances){
+                if(jpaServiceInstanceRepository.findByVmInstanceId(dep.getId()) == null){
+                    jpaServiceInstance.setVmInstanceId(dep.getId());
+                    jpaServiceInstance.setDashboardUrl(dep.getIps().substring(1,dep.getIps().length()-1));
+                    jpaServiceInstanceRepository.save(jpaServiceInstance);
+                    jpaServiceInstance.withAsync(true);
+                    cloudFoundryService.SecurityGurop(request.getSpaceGuid(), jpaServiceInstance.getDashboardUrl());
+                    logger.info("서비스 인스턴스 생성");
+                    return jpaServiceInstance;
+                }
+            }
             logger.info("LOCK CHECKING!!!");
             //여기 지나치면 무조건 생성또는 시작해야하기 때문에 deployment 작업 여부 조회해야함
             if (onDemandDeploymentService.getLock(deployment_name)) {
@@ -108,6 +120,7 @@ public class OnDemandInstanceService implements ServiceInstanceService {
                 jpaServiceInstance.setDashboardUrl(ips);
                 jpaServiceInstanceRepository.save(jpaServiceInstance);
                 jpaServiceInstance.withAsync(true);
+                cloudFoundryService.SecurityGurop(request.getSpaceGuid(), jpaServiceInstance.getDashboardUrl());
                 return jpaServiceInstance;
             }
 
@@ -141,9 +154,11 @@ public class OnDemandInstanceService implements ServiceInstanceService {
             jpaServiceInstance.setVmInstanceId(instanceId);
             jpaServiceInstanceRepository.save(jpaServiceInstance);
             jpaServiceInstance.withAsync(true);
+            cloudFoundryService.SecurityGurop(request.getSpaceGuid(), jpaServiceInstance.getDashboardUrl());
             return jpaServiceInstance;
         } catch (Exception e) {
             throw new ServiceBrokerException(e.getMessage());
+
         }
     }
 
@@ -215,9 +230,9 @@ public class OnDemandInstanceService implements ServiceInstanceService {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-
             }, executor);
             return instance;
         }

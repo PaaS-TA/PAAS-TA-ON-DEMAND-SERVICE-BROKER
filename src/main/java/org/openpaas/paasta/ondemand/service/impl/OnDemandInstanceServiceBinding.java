@@ -13,6 +13,7 @@ import org.openpaas.servicebroker.model.ServiceInstanceBinding;
 
 import org.openpaas.servicebroker.service.ServiceInstanceBindingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -24,12 +25,22 @@ public class OnDemandInstanceServiceBinding implements ServiceInstanceBindingSer
     @Autowired
     JpaServiceInstanceRepository jpaServiceInstanceRepository;
 
+    @Value("${instance.password}")
+    public String password;
+
+    @Value("${instance.port}")
+    public int port;
+
     @Override
     public ServiceInstanceBinding createServiceInstanceBinding(CreateServiceInstanceBindingRequest request) {
-        Map<String, Object> credentials = new HashMap<String, Object>();
+        Map<String, Object> credentials = request.getParameters();
         JpaServiceInstance instance = jpaServiceInstanceRepository.findByServiceInstanceId(request.getServiceInstanceId());
-        credentials = request.getParameters();
+        if(credentials == null){
+            credentials = new HashMap<String, Object>();
+        }
         credentials.put("host", instance.getDashboardUrl());
+        credentials.put("password", password);
+        credentials.put("port", port);
         ServiceInstanceBinding serviceInstanceBinding = new ServiceInstanceBinding(request.getBindingId(), request.getServiceInstanceId(), credentials, null, request.getAppGuid());
         return serviceInstanceBinding;
     }

@@ -6,13 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-/**
- * Web-Ide 서비스 관련 에러 Exception 클래스
- *
- * @author sjchoi
- * @since 2018.08.14
- */
-
 @Repository
 public interface JpaServiceInstanceRepository extends JpaRepository<JpaServiceInstance, String> {
 

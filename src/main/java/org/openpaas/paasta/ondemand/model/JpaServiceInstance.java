@@ -83,17 +83,20 @@ public class JpaServiceInstance extends ServiceInstance {
         setServiceInstanceId(request.getServiceInstanceId());
         AtomicReference<String> param = new AtomicReference<>("{");
         AtomicInteger i = new AtomicInteger(1);
-        if (request.getParameters() != null) {
-            request.getParameters().forEach((key, value) -> {
-                if (key.equals("app_guid")) {
-                    setAppGuid(value.toString());
-                }
-                param.set(param.get() + "\"" + key + "\":\"" + value.toString() + "\"");
-                if (i.get() < request.getParameters().size()) {
-                    param.set(param.get() + ",");
-                }
-                i.set(i.get() + 1);
-            });
+        try {
+            if (request.getParameters() != null) {
+                request.getParameters().forEach((key, value) -> {
+                    if (key.equals("app_guid")) {
+                        setAppGuid(value.toString());
+                    }
+                    param.set(param.get() + "\"" + key + "\":\"" + value.toString() + "\"");
+                    if (i.get() < request.getParameters().size()) {
+                        param.set(param.get() + ",");
+                    }
+                    i.set(i.get() + 1);
+                });
+            }
+        }catch (Exception e){
         }
         param.set(param.get() + "}");
         setApp_parameter(param.get());
