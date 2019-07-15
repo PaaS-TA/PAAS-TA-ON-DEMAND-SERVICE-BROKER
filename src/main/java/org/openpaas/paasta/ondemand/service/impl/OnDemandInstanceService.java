@@ -69,6 +69,7 @@ public class OnDemandInstanceService implements ServiceInstanceService {
         JpaServiceInstance jpaServiceInstance = new JpaServiceInstance(request);
         jpaServiceInstanceRepository.save(jpaServiceInstance);
         try {
+            logger.info("test1 ::" + org_limitation + ", request.getOrganizationGuid()).size() :: " + jpaServiceInstanceRepository.findAllByOrganizationGuid(request.getOrganizationGuid()).size() );
             if (jpaServiceInstanceRepository.findAllByOrganizationGuid(request.getOrganizationGuid()).size() > org_limitation && org_limitation != unlimited) {
                 throw new OndemandServiceException("Currently, only " + org_limitation + " service instances can be created in this organization.");
             }
@@ -77,10 +78,11 @@ public class OnDemandInstanceService implements ServiceInstanceService {
             }
             List<DeploymentInstance> deploymentInstances = onDemandDeploymentService.getVmInstance(deployment_name, instance_name);
             if (deploymentInstances == null) {
-                throw new ServiceBrokerException(deployment_name + "is Working");
+                throw new ServiceBrokerException(deployment_name + " is Working");
             }
             List<DeploymentInstance> startedDeploymentInstances = deploymentInstances.stream().filter((x) -> x.getState().equals(BoshDirector.INSTANCE_STATE_START) && x.getJobState().equals("running")).collect(Collectors.toList());
             for(DeploymentInstance dep : startedDeploymentInstances){
+                logger.info("test ::::");
                 if(jpaServiceInstanceRepository.findByVmInstanceId(dep.getId()) == null){
                     jpaServiceInstance.setVmInstanceId(dep.getId());
                     jpaServiceInstance.setDashboardUrl(dep.getIps().substring(1,dep.getIps().length()-1));
@@ -94,7 +96,7 @@ public class OnDemandInstanceService implements ServiceInstanceService {
             logger.info("LOCK CHECKING!!!");
             //여기 지나치면 무조건 생성또는 시작해야하기 때문에 deployment 작업 여부 조회해야함
             if (onDemandDeploymentService.getLock(deployment_name)) {
-                throw new ServiceBrokerException(deployment_name + "is Working");
+                throw new ServiceBrokerException(deployment_name + " is Working");
             }
             List<DeploymentInstance> detachedDeploymentInstances = deploymentInstances.stream().filter(x -> x.getState().equals(BoshDirector.INSTANCE_STATE_DETACHED)).collect(Collectors.toList());
             String taskID = "";
@@ -164,8 +166,7 @@ public class OnDemandInstanceService implements ServiceInstanceService {
 
     @Override
     public ServiceInstance updateServiceInstance(UpdateServiceInstanceRequest request) throws ServiceInstanceUpdateNotSupportedException, ServiceBrokerException, ServiceInstanceDoesNotExistException {
-        JpaServiceInstance jpaServiceInstance = new JpaServiceInstance(request);
-        return jpaServiceInstance;
+        throw new ServiceBrokerException("Not Supported");
     }
 
     @Override

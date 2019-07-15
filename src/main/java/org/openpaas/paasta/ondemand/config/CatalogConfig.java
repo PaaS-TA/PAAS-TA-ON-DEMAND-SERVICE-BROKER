@@ -12,8 +12,8 @@ import java.util.*;
 /**
  * Spring boot 구동시 Catalog API 에서 사용하는 Catalog Bean을 생성하는 클래스
  *
- * @author sjchoi
- * @since 2018.08.21
+ * @author cheolhan
+ * @since 2019.03.22
  * @version 1.0
  */
 

@@ -229,6 +229,10 @@ public class JpaServiceInstance extends ServiceInstance {
         this.app_parameter = app_parameter;
     }
 
+    public void setAsync(boolean async) {
+        this.async = async;
+    }
+
     @Override
     public String toString() {
         return "JpaServiceInstance{" +
