@@ -34,4 +34,18 @@ public class DeploymentInstanceModel {
         map.put("active","active");
         return new DeploymentInstance(map);
     }
+
+    public static DeploymentInstance getDeploymentEmptyInstance(){
+        Map map = new HashMap<>();
+        map.put("id","id");
+        map.put("vm_cid","vm_cid");
+        map.put("disk_cid","disk_cid");
+        map.put("agent_id","agent_id");
+        map.put("ips","ips");
+        map.put("job_name","job_name");
+        map.put("job_state","job_state");
+        map.put("state","state");
+        map.put("active","active");
+        return new DeploymentInstance(map);
+    }
 }

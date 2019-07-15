@@ -69,7 +69,6 @@ public class OnDemandInstanceService implements ServiceInstanceService {
         JpaServiceInstance jpaServiceInstance = new JpaServiceInstance(request);
         jpaServiceInstanceRepository.save(jpaServiceInstance);
         try {
-            logger.info("test1 ::" + org_limitation + ", request.getOrganizationGuid()).size() :: " + jpaServiceInstanceRepository.findAllByOrganizationGuid(request.getOrganizationGuid()).size() );
             if (jpaServiceInstanceRepository.findAllByOrganizationGuid(request.getOrganizationGuid()).size() > org_limitation && org_limitation != unlimited) {
                 throw new OndemandServiceException("Currently, only " + org_limitation + " service instances can be created in this organization.");
             }
@@ -82,7 +81,6 @@ public class OnDemandInstanceService implements ServiceInstanceService {
             }
             List<DeploymentInstance> startedDeploymentInstances = deploymentInstances.stream().filter((x) -> x.getState().equals(BoshDirector.INSTANCE_STATE_START) && x.getJobState().equals("running")).collect(Collectors.toList());
             for(DeploymentInstance dep : startedDeploymentInstances){
-                logger.info("test ::::");
                 if(jpaServiceInstanceRepository.findByVmInstanceId(dep.getId()) == null){
                     jpaServiceInstance.setVmInstanceId(dep.getId());
                     jpaServiceInstance.setDashboardUrl(dep.getIps().substring(1,dep.getIps().length()-1));

@@ -8,9 +8,8 @@ import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
+import org.openpaas.paasta.bosh.director.BoshDirector;
 import org.openpaas.paasta.ondemand.model.DeploymentInstance;
 import org.openpaas.paasta.ondemand.model.JpaServiceInstance;
 import org.openpaas.paasta.ondemand.repo.JpaServiceInstanceRepository;
@@ -36,6 +35,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -61,7 +61,6 @@ public class OnDemandInstanceServiceTest {
 
     @Mock
     private RestTemplate restTemplate;
-
 
     @Before
     public void setup() {
@@ -163,6 +162,29 @@ public class OnDemandInstanceServiceTest {
         assertThat(result.getVmInstanceId(), is(getVmInstance.get(0).getId()));
         assertThat(result.getDashboardUrl(), is(ips));
     }
+
+    //Detach VM Instance Create Test
+    @Test
+    public void createSErviceInstanceTest_7() throws Exception {
+        CreateServiceInstanceRequest request = ServiceInstanceRequestModel.getCreateServiceInstanceRequest();
+        List<DeploymentInstance> getVmInstance = new ArrayList<>();
+        getVmInstance.add(DeploymentInstanceModel.getDeploymentEmptyInstance());
+        String taskId = "test taskId";
+        String ips = "test Ips";
+        String instance_id = "test instance_id";
+        when(onDemandDeploymentService.getVmInstance("deployment_name", "instance_name")).thenReturn(getVmInstance);
+        when(onDemandDeploymentService.getLock("deployment_name")).thenReturn(false);
+        Mockito.doCallRealMethod().when(onDemandDeploymentService).createInstance("deployment_name","instance_name");
+        onDemandDeploymentService.createInstance("deployment_name","instance_name");
+        when(onDemandDeploymentService.getTaskID("deployment_name")).thenReturn(taskId);
+        when(onDemandDeploymentService.getUpdateInstanceIPS(taskId)).thenReturn(ips);
+        when(onDemandDeploymentService.getUpdateVMInstanceID(taskId,"instance_name")).thenReturn(instance_id);
+        JpaServiceInstance result = onDemandInstanceService.createServiceInstance(request);
+        assertThat(result.getVmInstanceId(), is(instance_id));
+        assertThat(result.getDashboardUrl(), is(ips));
+    }
+
+
 
 
 }

@@ -131,7 +131,11 @@ public class OnDemandDeploymentService {
     }
 
     public void createInstance(String deployment_name, String instance_name) throws Exception {
-        boshDirector.deploy(deployment_name, instance_name);
+        try {
+            boshDirector.deploy(deployment_name, instance_name);
+        } catch (Exception e) {
+
+        }
     }
 
     public String getUpdateInstanceIPS(String task_id) {
