@@ -18,6 +18,7 @@ import org.openpaas.paasta.ondemand.service.impl.OnDemandDeploymentService;
 import org.openpaas.paasta.ondemand.service.impl.OnDemandInstanceService;
 import org.openpaas.servicebroker.exception.ServiceBrokerException;
 import org.openpaas.servicebroker.model.CreateServiceInstanceRequest;
+import org.openpaas.servicebroker.model.DeleteServiceInstanceRequest;
 import org.openpaas.servicebroker.model.ServiceInstance;
 import org.openpaas.servicebroker.model.UpdateServiceInstanceRequest;
 import org.slf4j.Logger;
@@ -99,7 +100,7 @@ public class OnDemandInstanceServiceTest {
 
     //org 할당된 Service Instance 초과될경우
     @Test
-    public void createSErviceInstanceTest_1() throws Exception {
+    public void createServiceInstanceTest_1() throws Exception {
         CreateServiceInstanceRequest request = ServiceInstanceRequestModel.getCreateServiceInstanceRequest();
         onDemandInstanceService.org_limitation = -2;
         assertThatThrownBy(() -> onDemandInstanceService.createServiceInstance(request))
@@ -108,7 +109,7 @@ public class OnDemandInstanceServiceTest {
 
     //space 할당된 Service Instance 초과될경우
     @Test
-    public void createSErviceInstanceTest_2() throws Exception {
+    public void createServiceInstanceTest_2() throws Exception {
         CreateServiceInstanceRequest request = ServiceInstanceRequestModel.getCreateServiceInstanceRequest();
         onDemandInstanceService.space_limitation = -2;
         assertThatThrownBy(() -> onDemandInstanceService.createServiceInstance(request))
@@ -117,7 +118,7 @@ public class OnDemandInstanceServiceTest {
 
     //getVmInstance == null
     @Test
-    public void createSErviceInstanceTest_3() throws Exception {
+    public void createServiceInstanceTest_3() throws Exception {
         CreateServiceInstanceRequest request = ServiceInstanceRequestModel.getCreateServiceInstanceRequest();
         when(onDemandDeploymentService.getVmInstance("deployment_name", "instance_name")).thenReturn(null);
         assertThatThrownBy(() -> onDemandInstanceService.createServiceInstance(request))
@@ -126,7 +127,7 @@ public class OnDemandInstanceServiceTest {
 
     //findByVmInstanceId == null
     @Test
-    public void createSErviceInstanceTest_4() throws Exception {
+    public void createServiceInstanceTest_4() throws Exception {
         CreateServiceInstanceRequest request = ServiceInstanceRequestModel.getCreateServiceInstanceRequest();
         List<DeploymentInstance> getVmInstance = new ArrayList<>();
         getVmInstance.add(DeploymentInstanceModel.getDeploymentInstance());
@@ -139,7 +140,7 @@ public class OnDemandInstanceServiceTest {
 
     //getLock == true
     @Test
-    public void createSErviceInstanceTest_5() throws Exception {
+    public void createServiceInstanceTest_5() throws Exception {
         CreateServiceInstanceRequest request = ServiceInstanceRequestModel.getCreateServiceInstanceRequest();
         when(onDemandDeploymentService.getLock("deployment_name")).thenReturn(true);
         assertThatThrownBy(() -> onDemandInstanceService.createServiceInstance(request))
@@ -148,7 +149,7 @@ public class OnDemandInstanceServiceTest {
 
     //Detach VM Start Test
     @Test
-    public void createSErviceInstanceTest_6() throws Exception {
+    public void createServiceInstanceTest_6() throws Exception {
         CreateServiceInstanceRequest request = ServiceInstanceRequestModel.getCreateServiceInstanceRequest();
         List<DeploymentInstance> getVmInstance = new ArrayList<>();
         getVmInstance.add(DeploymentInstanceModel.getDeploymentDetachedInstance());
@@ -165,7 +166,7 @@ public class OnDemandInstanceServiceTest {
 
     //Detach VM Instance Create Test
     @Test
-    public void createSErviceInstanceTest_7() throws Exception {
+    public void createServiceInstanceTest_7() throws Exception {
         CreateServiceInstanceRequest request = ServiceInstanceRequestModel.getCreateServiceInstanceRequest();
         List<DeploymentInstance> getVmInstance = new ArrayList<>();
         getVmInstance.add(DeploymentInstanceModel.getDeploymentEmptyInstance());
@@ -183,6 +184,32 @@ public class OnDemandInstanceServiceTest {
         assertThat(result.getVmInstanceId(), is(instance_id));
         assertThat(result.getDashboardUrl(), is(ips));
     }
+
+    //Detach VM Instance Create Test
+    @Test
+    public void deleteServiceInstanceTest_1() throws Exception {
+        DeleteServiceInstanceRequest request = ServiceInstanceRequestModel.getDeleteServiceInstanceRequest();
+        JpaServiceInstance jpaServiceInstance = new JpaServiceInstance();
+        when(jpaServiceInstanceRepository.findByServiceInstanceId(request.getServiceInstanceId())).thenReturn(jpaServiceInstance);
+        jpaServiceInstance.setVmInstanceId(null);
+        ServiceInstance result = onDemandInstanceService.deleteServiceInstance(request);
+        assertThat(result.getServiceInstanceId(), is(jpaServiceInstance.getServiceInstanceId()));
+    }
+
+    //Detach VM Instance Create Test
+    @Test
+    public void deleteServiceInstanceTest_2() throws Exception {
+        DeleteServiceInstanceRequest request = ServiceInstanceRequestModel.getDeleteServiceInstanceRequest();
+        JpaServiceInstance jpaServiceInstance = new JpaServiceInstance();
+        when(jpaServiceInstanceRepository.findByServiceInstanceId(request.getServiceInstanceId())).thenReturn(jpaServiceInstance);
+        when(jpaServiceInstanceRepository.existsAllByVmInstanceId(request.getServiceInstanceId())).thenReturn(true);
+        when(onDemandDeploymentService.getLock("deployment_name")).thenReturn(true);
+        when(onDemandDeploymentService.getLock("deployment_name")).thenReturn(false);
+        jpaServiceInstance.setVmInstanceId(anyString());
+        ServiceInstance result = onDemandInstanceService.deleteServiceInstance(request);
+        assertThat(result.getServiceInstanceId(), is(jpaServiceInstance.getServiceInstanceId()));
+    }
+
 
 
 
