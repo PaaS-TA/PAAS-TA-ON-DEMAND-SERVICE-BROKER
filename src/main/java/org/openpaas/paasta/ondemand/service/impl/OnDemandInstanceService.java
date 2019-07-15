@@ -181,9 +181,6 @@ public class OnDemandInstanceService implements ServiceInstanceService {
                     e.printStackTrace();
                 }
                 while (true) {
-                    if (jpaServiceInstanceRepository.existsAllByVmInstanceId(instance.getVmInstanceId())) {
-                        break;
-                    }
                     if (onDemandDeploymentService.getLock(deployment_name)) {
                         try {
                             Thread.sleep(15000);

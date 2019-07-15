@@ -134,7 +134,7 @@ public class OnDemandDeploymentService {
         try {
             boshDirector.deploy(deployment_name, instance_name);
         } catch (Exception e) {
-
+            logger.error(e.getMessage());
         }
     }
 
