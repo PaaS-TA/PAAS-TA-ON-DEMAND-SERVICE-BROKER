@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.openpaas.servicebroker.service.ServiceInstanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -178,14 +177,14 @@ public class OnDemandInstanceService implements ServiceInstanceService {
                 try {
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    logger.error(e.getMessage());
                 }
                 while (true) {
                     if (onDemandDeploymentService.getLock(deployment_name)) {
                         try {
                             Thread.sleep(15000);
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            logger.error(e.getMessage());
                         }
                         continue;
                     }
@@ -219,15 +218,15 @@ public class OnDemandInstanceService implements ServiceInstanceService {
                         cloudFoundryService.ServiceInstanceAppBinding(instance.getAppGuid(), instance.getServiceInstanceId(), (Map) this.objectMapper.readValue(instance.getApp_parameter(), Map.class));
                     }
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    logger.error(e.getMessage());
                 } catch (JsonParseException e) {
-                    e.printStackTrace();
+                    logger.error(e.getMessage());
                 } catch (JsonMappingException e) {
-                    e.printStackTrace();
+                    logger.error(e.getMessage());
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error(e.getMessage());
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.error(e.getMessage());
                 }
             }, executor);
             return instance;

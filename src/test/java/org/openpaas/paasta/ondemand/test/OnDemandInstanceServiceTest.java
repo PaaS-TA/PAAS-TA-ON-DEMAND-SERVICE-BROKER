@@ -154,6 +154,20 @@ public class OnDemandInstanceServiceTest {
 
     //getLock == true
     @Test
+    public void createServiceInstanceTest_4_1() throws Exception {
+        CreateServiceInstanceRequest request = ServiceInstanceRequestModel.getCreateServiceInstanceRequest();
+        List<DeploymentInstance> getVmInstance = new ArrayList<>();
+        getVmInstance.add(DeploymentInstanceModel.getDeploymentInstance());
+        JpaServiceInstance jpaServiceInstance = new JpaServiceInstance();
+        when(onDemandDeploymentService.getVmInstance("deployment_name", "instance_name")).thenReturn(getVmInstance);
+        when(jpaServiceInstanceRepository.findByVmInstanceId(getVmInstance.get(0).getId())).thenReturn(jpaServiceInstance);
+        when(onDemandDeploymentService.getLock("deployment_name")).thenReturn(true);
+        assertThatThrownBy(() -> onDemandInstanceService.createServiceInstance(request))
+                .isInstanceOf(ServiceBrokerException.class).hasMessageContaining("deployment_name is Working");
+    }
+
+    //getLock == true
+    @Test
     public void createServiceInstanceTest_5() throws Exception {
         CreateServiceInstanceRequest request = ServiceInstanceRequestModel.getCreateServiceInstanceRequest();
         when(onDemandDeploymentService.getLock("deployment_name")).thenReturn(true);
@@ -178,6 +192,28 @@ public class OnDemandInstanceServiceTest {
         assertThat(result.getDashboardUrl(), is(ips));
     }
 
+    //Detach VM Start Sleep Test
+    @Test
+    public void createServiceInstanceTest_6_1() throws Exception {
+        CreateServiceInstanceRequest request = ServiceInstanceRequestModel.getCreateServiceInstanceRequest();
+        List<DeploymentInstance> getVmInstance = new ArrayList<>();
+        getVmInstance.add(DeploymentInstanceModel.getDeploymentDetachedInstance());
+        when(onDemandDeploymentService.getVmInstance("deployment_name", "instance_name")).thenReturn(getVmInstance);
+        when(onDemandDeploymentService.getLock("deployment_name")).thenReturn(false);
+        when(onDemandDeploymentService.getTaskID("deployment_name")).thenReturn(null);
+    }
+
+    //Detach VM Start Sleep Test
+    @Test
+    public void createServiceInstanceTest_6_2() throws Exception {
+        CreateServiceInstanceRequest request = ServiceInstanceRequestModel.getCreateServiceInstanceRequest();
+        List<DeploymentInstance> getVmInstance = new ArrayList<>();
+        getVmInstance.add(DeploymentInstanceModel.getDeploymentDetachedInstance());
+        when(onDemandDeploymentService.getVmInstance("deployment_name", "instance_name")).thenReturn(getVmInstance);
+        when(onDemandDeploymentService.getLock("deployment_name")).thenReturn(false);
+        when(onDemandDeploymentService.getTaskID("deployment_name")).thenReturn(null);
+    }
+
     //Detach VM Instance Create Test
     @Test
     public void createServiceInstanceTest_7() throws Exception {
@@ -197,6 +233,34 @@ public class OnDemandInstanceServiceTest {
         JpaServiceInstance result = onDemandInstanceService.createServiceInstance(request);
         assertThat(result.getVmInstanceId(), is(instance_id));
         assertThat(result.getDashboardUrl(), is(ips));
+    }
+
+    //Detach VM Instance Create Sleep Test
+    @Test
+    public void createServiceInstanceTest_7_1() throws Exception {
+        CreateServiceInstanceRequest request = ServiceInstanceRequestModel.getCreateServiceInstanceRequest();
+        List<DeploymentInstance> getVmInstance = new ArrayList<>();
+        getVmInstance.add(DeploymentInstanceModel.getDeploymentEmptyInstance());
+        when(onDemandDeploymentService.getVmInstance("deployment_name", "instance_name")).thenReturn(getVmInstance);
+        when(onDemandDeploymentService.getLock("deployment_name")).thenReturn(false);
+        Mockito.doCallRealMethod().when(onDemandDeploymentService).createInstance("deployment_name","instance_name");
+        onDemandDeploymentService.createInstance("deployment_name","instance_name");
+        when(onDemandDeploymentService.getTaskID("deployment_name")).thenReturn(null);
+    }
+
+    //Detach VM Instance Create Sleep Test
+    @Test
+    public void createServiceInstanceTest_7_2() throws Exception {
+        CreateServiceInstanceRequest request = ServiceInstanceRequestModel.getCreateServiceInstanceRequest();
+        List<DeploymentInstance> getVmInstance = new ArrayList<>();
+        getVmInstance.add(DeploymentInstanceModel.getDeploymentEmptyInstance());
+        String taskId = "test taskId";
+        when(onDemandDeploymentService.getVmInstance("deployment_name", "instance_name")).thenReturn(getVmInstance);
+        when(onDemandDeploymentService.getLock("deployment_name")).thenReturn(false);
+        Mockito.doCallRealMethod().when(onDemandDeploymentService).createInstance("deployment_name","instance_name");
+        onDemandDeploymentService.createInstance("deployment_name","instance_name");
+        when(onDemandDeploymentService.getTaskID("deployment_name")).thenReturn(taskId);
+        when(onDemandDeploymentService.getUpdateInstanceIPS(taskId)).thenReturn(null);
     }
 
     //Detach VM Instance Create Test
