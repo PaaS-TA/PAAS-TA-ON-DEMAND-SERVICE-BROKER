@@ -1,12 +1,9 @@
 package org.openpaas.paasta.ondemand.service.impl;
 
 
-import org.openpaas.paasta.ondemand.exception.OndemandServiceException;
 import org.openpaas.paasta.ondemand.model.JpaServiceInstance;
 import org.openpaas.paasta.ondemand.repo.JpaServiceInstanceRepository;
 import org.openpaas.servicebroker.exception.ServiceBrokerException;
-import org.openpaas.servicebroker.exception.ServiceInstanceDoesNotExistException;
-import org.openpaas.servicebroker.exception.ServiceInstanceUpdateNotSupportedException;
 import org.openpaas.servicebroker.model.CreateServiceInstanceBindingRequest;
 import org.openpaas.servicebroker.model.DeleteServiceInstanceBindingRequest;
 import org.openpaas.servicebroker.model.ServiceInstanceBinding;
