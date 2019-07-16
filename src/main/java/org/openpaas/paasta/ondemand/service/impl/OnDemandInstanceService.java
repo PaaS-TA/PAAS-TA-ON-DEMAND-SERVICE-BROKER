@@ -176,22 +176,18 @@ public class OnDemandInstanceService implements ServiceInstanceService {
                 lock.lock();
                 try {
                     Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    logger.error(e.getMessage());
-                }
+
                 while (true) {
                     if (onDemandDeploymentService.getLock(deployment_name)) {
-                        try {
                             Thread.sleep(15000);
-                        } catch (InterruptedException e) {
-                            logger.error(e.getMessage());
-                        }
                         continue;
                     }
                     onDemandDeploymentService.updateInstanceState(deployment_name, instance_name, instance.getVmInstanceId(), BoshDirector.INSTANCE_STATE_DETACHED);
                     logger.info("VM DETACHED SUCCEED : VM_ID : " + instance.getVmInstanceId());
-
                     break;
+                }
+                } catch (InterruptedException e) {
+                    logger.error(e.getMessage());
                 }
                 lock.unlock();
             }, executor);

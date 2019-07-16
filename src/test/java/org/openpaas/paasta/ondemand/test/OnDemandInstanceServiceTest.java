@@ -6,6 +6,7 @@ import model.ServiceInstanceModel;
 import model.ServiceInstanceRequestModel;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.mockito.*;
@@ -75,6 +76,9 @@ public class OnDemandInstanceServiceTest {
     // My class in which I want to inject the mocks
     @InjectMocks
     private CompletableFuture service;
+
+    @Rule
+    public InterruptedException interruptedException = new InterruptedException();
 
     @Before
     public void setup() {
@@ -274,6 +278,7 @@ public class OnDemandInstanceServiceTest {
         assertThat(result.getServiceInstanceId(), is(jpaServiceInstance.getServiceInstanceId()));
     }
 
+
     //Detach VM Instance Create Test
     @Test
     public void deleteServiceInstanceTest_2() throws Exception {
@@ -285,6 +290,17 @@ public class OnDemandInstanceServiceTest {
         jpaServiceInstance.setVmInstanceId(anyString());
         ServiceInstance result = onDemandInstanceService.deleteServiceInstance(request);
         assertThat(result.getServiceInstanceId(), is(jpaServiceInstance.getServiceInstanceId()));
+    }
+
+    @Test
+    public void deleteServiceInstanceTest_2_1() throws Exception {
+        DeleteServiceInstanceRequest request = ServiceInstanceRequestModel.getDeleteServiceInstanceRequest();
+        JpaServiceInstance jpaServiceInstance = new JpaServiceInstance();
+        when(jpaServiceInstanceRepository.findByServiceInstanceId(request.getServiceInstanceId())).thenReturn(jpaServiceInstance);
+        when(jpaServiceInstanceRepository.existsAllByVmInstanceId(request.getServiceInstanceId())).thenReturn(true);
+        when(onDemandDeploymentService.getLock("deployment_name")).thenReturn(false);
+        jpaServiceInstance.setVmInstanceId(anyString());
+        ServiceInstance result = onDemandInstanceService.deleteServiceInstance(request);
     }
 
     //Detach VM Instance Create Test

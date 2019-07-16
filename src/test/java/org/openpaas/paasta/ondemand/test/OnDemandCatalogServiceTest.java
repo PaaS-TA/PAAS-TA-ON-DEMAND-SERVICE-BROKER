@@ -53,6 +53,40 @@ public class OnDemandCatalogServiceTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
+        basicAuth = "Basic " + (Base64.getEncoder().encodeToString(("admin" + ":" + "cloudfoundry").getBytes()));
+        // CatalogController 를 MockMvC 객체로 만듬.
+        this.mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+    }
+
+    @Test
+    public void getCatalog() throws Exception {
+        ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_ID", "54e2de61-de84-4b9c-afc3-88d08aadfcb6");
+        ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_NAME", "redis");
+        ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_DESC", "\"A paasta source control service for application development.provision parameters : parameters {owner : owner}\"");
+        ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_BINDABLE_STRING", "false");
+        ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_PLANUPDATABLE_STRING", "true");
+        ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_BULLET_NAME", "100");
+        ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_BULLET_DESC", "100");
+        ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_PLAN1_ID", "2a26b717-b8b5-489c-8ef1-02bcdc445720");
+        ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_PLAN1_NAME", "dedicated-vm");
+        ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_PLAN1_DESC", "on-demand plan test");
+        ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_PLAN1_TYPE", "A");
+        catalog = catalogConfig.catalog();
+        when(catalogService.getCatalog()).thenReturn(catalog);
+
+        MvcResult result = this.mockMvc.perform(get(CatalogController.BASE_PATH)
+                .header("X-Broker-Api-Version", "2")
+                .header("Authorization", basicAuth)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andReturn();
+    }
+
+    @Test
+    public void getCatalog_B() throws Exception {
         ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_ID", "54e2de61-de84-4b9c-afc3-88d08aadfcb6");
         ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_NAME", "redis");
         ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_DESC", "\"A paasta source control service for application development.provision parameters : parameters {owner : owner}\"");
@@ -63,17 +97,35 @@ public class OnDemandCatalogServiceTest {
         ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_PLAN1_ID", "2a26b717-b8b5-489c-8ef1-02bcdc445720");
         ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_PLAN1_NAME", "dedicated-vm");
         ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_PLAN1_DESC", "on-demand plan test");
-        ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_PLAN1_TYPE", "A");
+        ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_PLAN1_TYPE", "B");
         catalog = catalogConfig.catalog();
-
-        basicAuth = "Basic " + (Base64.getEncoder().encodeToString(("admin" + ":" + "cloudfoundry").getBytes()));
-        // CatalogController 를 MockMvC 객체로 만듬.
-        this.mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        when(catalogService.getCatalog()).thenReturn(catalog);
+        MvcResult result = this.mockMvc.perform(get(CatalogController.BASE_PATH)
+                .header("X-Broker-Api-Version", "2")
+                .header("Authorization", basicAuth)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andReturn();
     }
 
     @Test
-    public void getCatalog() throws Exception {
+    public void getCatalog_Default() throws Exception {
 
+        ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_ID", "54e2de61-de84-4b9c-afc3-88d08aadfcb6");
+        ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_NAME", "redis");
+        ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_DESC", "\"A paasta source control service for application development.provision parameters : parameters {owner : owner}\"");
+        ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_BINDABLE_STRING", "true");
+        ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_PLANUPDATABLE_STRING", "false");
+        ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_BULLET_NAME", "100");
+        ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_BULLET_DESC", "100");
+        ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_PLAN1_ID", "2a26b717-b8b5-489c-8ef1-02bcdc445720");
+        ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_PLAN1_NAME", "dedicated-vm");
+        ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_PLAN1_DESC", "on-demand plan test");
+        ReflectionTestUtils.setField(catalogConfig, "SERVICEDEFINITION_PLAN1_TYPE", "C");
+        catalog = catalogConfig.catalog();
         when(catalogService.getCatalog()).thenReturn(catalog);
 
         MvcResult result = this.mockMvc.perform(get(CatalogController.BASE_PATH)

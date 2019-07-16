@@ -53,20 +53,6 @@ public class CatalogConfig {
 	@Value("${serviceDefinition.plan1.type}")
 	String SERVICEDEFINITION_PLAN1_TYPE;
 
-
-//    @Value("${serviceDefinition.plan2.id}")
-//    String SERVICEDEFINITION_PLAN2_ID;
-//
-//    @Value("${serviceDefinition.plan2.name}")
-//    String SERVICEDEFINITION_PLAN2_NAME;
-//
-//    @Value("${serviceDefinition.plan2.desc}")
-//    String SERVICEDEFINITION_PLAN2_DESC;
-//
-//    @Value("${serviceDefinition.plan2.type}")
-//    String SERVICEDEFINITION_PLAN2_TYPE;
-
-
 	@Bean
 	public Catalog catalog() {
 		boolean SERVICEDEFINITION_BINDABLE = true;
@@ -142,13 +128,13 @@ public class CatalogConfig {
 
 				break;
 			case "B":
-				amount.put("usd", 0.0);
+				amount.put("usd", 10.0);
 				costsMap.put("amount", amount);
 				costsMap.put("unit", "MONTHLY");
 
 				break;
 			default:
-				amount.put("usd", 0.0);
+				amount.put("usd", 100.0);
 				costsMap.put("amount", amount);
 				costsMap.put("unit", "MONTHLY");
 				break;
