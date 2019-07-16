@@ -77,9 +77,6 @@ public class OnDemandInstanceServiceTest {
     @InjectMocks
     private CompletableFuture service;
 
-    @Rule
-    public InterruptedException interruptedException = new InterruptedException();
-
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
