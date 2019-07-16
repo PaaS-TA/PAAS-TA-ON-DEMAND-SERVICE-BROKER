@@ -209,7 +209,7 @@ public class JpaServiceInstance extends ServiceInstance {
     }
 
     @Override
-    public ServiceInstance withDashboardUrl(String dashboardUrl) {
+    public JpaServiceInstance withDashboardUrl(String dashboardUrl) {
         this.dashboardUrl = dashboardUrl;
         return this;
     }

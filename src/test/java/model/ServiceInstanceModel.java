@@ -16,7 +16,8 @@ public class ServiceInstanceModel {
 
     public static JpaServiceInstance getJpaServiceInstance(){
         return new JpaServiceInstance(ServiceInstanceRequestModel.getCreateServiceInstanceRequest()
-                .withServiceInstanceId("ServiceInstance_id"));
+                .withServiceInstanceId("ServiceInstance_id"))
+                .withDashboardUrl("dashboardUrl");
     }
 
 }
