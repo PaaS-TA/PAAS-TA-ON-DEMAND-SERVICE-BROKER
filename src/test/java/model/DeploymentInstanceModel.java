@@ -48,4 +48,8 @@ public class DeploymentInstanceModel {
         map.put("active","active");
         return new DeploymentInstance(map);
     }
+
+    public static DeploymentInstance EmptyInstance(){
+        return new DeploymentInstance();
+    }
 }

@@ -372,6 +372,33 @@ public class OnDemandInstanceServiceTest {
         assertThat(result, is(jpaServiceInstance));
     }
 
+    @Test
+    public void DeploymentModelTest() throws Exception {
+        DeploymentInstance deploymentInstance = DeploymentInstanceModel.getDeploymentInstance();
+        DeploymentInstance emptyInstance = DeploymentInstanceModel.EmptyInstance();
+
+        emptyInstance.setId(deploymentInstance.getId());
+        emptyInstance.setActive(deploymentInstance.getActive());
+        emptyInstance.setAgentId(deploymentInstance.getAgentId());
+        emptyInstance.setDiskCid(deploymentInstance.getDiskCid());
+        emptyInstance.setIps(deploymentInstance.getIps());
+        emptyInstance.setJobName(deploymentInstance.getJobName());
+        emptyInstance.setVmCid(deploymentInstance.getVmCid());
+        emptyInstance.setJobState(deploymentInstance.getJobState());
+        emptyInstance.setState(deploymentInstance.getState());
+
+        assertThat(deploymentInstance.getJobName(), is(emptyInstance.getJobName()));
+        assertThat(deploymentInstance.getVmCid(), is(emptyInstance.getVmCid()));
+        assertThat(deploymentInstance.getJobState(), is(emptyInstance.getJobState()));
+        assertThat(deploymentInstance.getState(), is(emptyInstance.getState()));
+        assertThat(deploymentInstance.getIps(), is(emptyInstance.getIps()));
+        assertThat(deploymentInstance.getDiskCid(), is(emptyInstance.getDiskCid()));
+        assertThat(deploymentInstance.getAgentId(), is(emptyInstance.getAgentId()));
+        assertThat(deploymentInstance.getActive(), is(emptyInstance.getActive()));
+        assertThat(deploymentInstance.getId(), is(emptyInstance.getId()));
+        assertThat(deploymentInstance.toString(), is(emptyInstance.toString()));
+
+    }
 
 
 
