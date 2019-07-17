@@ -174,11 +174,9 @@ public class OnDemandInstanceService implements ServiceInstanceService {
             CompletableFuture.runAsync(() -> {
                 lock.lock();
                 try {
-                    Thread.sleep(5000);
-
                 while (true) {
                     if (onDemandDeploymentService.getLock(deployment_name)) {
-                            Thread.sleep(15000);
+                        Thread.sleep(15000);
                         continue;
                     }
                     onDemandDeploymentService.updateInstanceState(deployment_name, instance_name, instance.getVmInstanceId(), BoshDirector.INSTANCE_STATE_DETACHED);
@@ -209,12 +207,9 @@ public class OnDemandInstanceService implements ServiceInstanceService {
             CompletableFuture.runAsync(() -> {
                 try {
                     if (instance.getAppGuid() != null) {
-                        Thread.sleep(10000);
                         cloudFoundryService.ServiceInstanceAppBinding(instance.getAppGuid(), instance.getServiceInstanceId(), (Map) this.objectMapper.readValue(instance.getApp_parameter(), Map.class));
                     }
-                } catch (InterruptedException e) {
-                    logger.error(e.getMessage());
-                } catch (JsonParseException e) {
+                }  catch (JsonParseException e) {
                     logger.error(e.getMessage());
                 } catch (JsonMappingException e) {
                     logger.error(e.getMessage());

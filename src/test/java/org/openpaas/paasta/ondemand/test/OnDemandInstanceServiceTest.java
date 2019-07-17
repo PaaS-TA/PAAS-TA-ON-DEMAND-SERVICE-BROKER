@@ -1,6 +1,8 @@
 package org.openpaas.paasta.ondemand.test;
 
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import model.DeploymentInstanceModel;
 import model.ServiceInstanceModel;
 import model.ServiceInstanceRequestModel;
@@ -26,13 +28,13 @@ import org.openpaas.servicebroker.model.UpdateServiceInstanceRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Timed;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -43,9 +45,7 @@ import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -277,7 +277,7 @@ public class OnDemandInstanceServiceTest {
     }
 
 
-    //Detach VM Instance Create Test
+    //Detach VM Instance delete Test
     @Test
     public void deleteServiceInstanceTest_2() throws Exception {
         DeleteServiceInstanceRequest request = ServiceInstanceRequestModel.getDeleteServiceInstanceRequest();
@@ -290,6 +290,7 @@ public class OnDemandInstanceServiceTest {
         assertThat(result.getServiceInstanceId(), is(jpaServiceInstance.getServiceInstanceId()));
     }
 
+    //Instance delete Test
     @Test
     public void deleteServiceInstanceTest_2_1() throws Exception {
         DeleteServiceInstanceRequest request = ServiceInstanceRequestModel.getDeleteServiceInstanceRequest();
@@ -301,7 +302,7 @@ public class OnDemandInstanceServiceTest {
         ServiceInstance result = onDemandInstanceService.deleteServiceInstance(request);
     }
 
-    //Detach VM Instance Create Test
+    //Instance delete Test
     @Test
     public void deleteServiceInstanceTest_3() throws Exception {
         DeleteServiceInstanceRequest request = ServiceInstanceRequestModel.getDeleteServiceInstanceRequest();
@@ -310,6 +311,19 @@ public class OnDemandInstanceServiceTest {
         when(jpaServiceInstanceRepository.existsAllByVmInstanceId(request.getServiceInstanceId())).thenReturn(true);
         when(onDemandDeploymentService.getLock("deployment_name")).thenReturn(true);
         jpaServiceInstance.setVmInstanceId(anyString());
+        ServiceInstance result = onDemandInstanceService.deleteServiceInstance(request);
+        assertThat(result.getServiceInstanceId(), is(jpaServiceInstance.getServiceInstanceId()));
+    }
+
+    //Instance delete Test Exception
+    @Test
+    public void deleteServiceInstanceTest_4() throws Exception {
+        DeleteServiceInstanceRequest request = ServiceInstanceRequestModel.getDeleteServiceInstanceRequest();
+        JpaServiceInstance jpaServiceInstance = new JpaServiceInstance();
+        jpaServiceInstance.setVmInstanceId(anyString());
+        when(jpaServiceInstanceRepository.findByServiceInstanceId(request.getServiceInstanceId())).thenReturn(jpaServiceInstance);
+        when(jpaServiceInstanceRepository.existsAllByVmInstanceId(request.getServiceInstanceId())).thenReturn(true);
+        doThrow(InterruptedException.class).when(onDemandDeploymentService).getLock("deployment_name");
         ServiceInstance result = onDemandInstanceService.deleteServiceInstance(request);
         assertThat(result.getServiceInstanceId(), is(jpaServiceInstance.getServiceInstanceId()));
     }
@@ -333,10 +347,72 @@ public class OnDemandInstanceServiceTest {
         JpaServiceInstance jpaServiceInstance = new JpaServiceInstance();
         String InstacneId = "Instance_id";
         jpaServiceInstance.setAppGuid("app_guid");
+        Map map = new HashMap<>();
+        map.put("test","test");
         when(jpaServiceInstanceRepository.findByServiceInstanceId(InstacneId)).thenReturn(jpaServiceInstance);
         when(onDemandDeploymentService.runningTask("deployment_name",jpaServiceInstance)).thenReturn(true);
-        ExecutorService service = Executors.newSingleThreadExecutor();
-        CompletableFuture<Void> runAsync = CompletableFuture.runAsync(() -> System.out.println("running async task"), service);
+        Mockito.doCallRealMethod().when(cloudFoundryService).ServiceInstanceAppBinding("app_id","serviceInstance_id",map);
+//        cloudFoundryService.ServiceInstanceAppBinding("app_id","serviceInstance_id",map);
+        JpaServiceInstance result = onDemandInstanceService.getOperationServiceInstance(InstacneId);
+        assertThat(result, is(jpaServiceInstance));
+    }
+
+    // getOperationServiceInstance Test JsonParseException
+    @Test
+    public void getOperationServiceInstanceTest_2_1() throws Exception {
+        JpaServiceInstance jpaServiceInstance = new JpaServiceInstance();
+        String InstacneId = "Instance_id";
+        jpaServiceInstance.setAppGuid("app_guid");
+        Map map = new HashMap<>();
+        map.put("test","test");
+        when(jpaServiceInstanceRepository.findByServiceInstanceId(InstacneId)).thenReturn(jpaServiceInstance);
+        when(onDemandDeploymentService.runningTask("deployment_name",jpaServiceInstance)).thenReturn(true);
+        doThrow(JsonParseException.class).when(cloudFoundryService).ServiceInstanceAppBinding("app_id","serviceInstance_id",map);
+        JpaServiceInstance result = onDemandInstanceService.getOperationServiceInstance(InstacneId);
+        assertThat(result, is(jpaServiceInstance));
+    }
+
+    // getOperationServiceInstance Test JsonMappingException
+    @Test
+    public void getOperationServiceInstanceTest_2_2() throws Exception {
+        JpaServiceInstance jpaServiceInstance = new JpaServiceInstance();
+        String InstacneId = "Instance_id";
+        jpaServiceInstance.setAppGuid("app_guid");
+        Map map = new HashMap<>();
+        map.put("test","test");
+        when(jpaServiceInstanceRepository.findByServiceInstanceId(InstacneId)).thenReturn(jpaServiceInstance);
+        when(onDemandDeploymentService.runningTask("deployment_name",jpaServiceInstance)).thenReturn(true);
+        doThrow(JsonMappingException.class).when(cloudFoundryService).ServiceInstanceAppBinding("app_id","serviceInstance_id",map);
+        JpaServiceInstance result = onDemandInstanceService.getOperationServiceInstance(InstacneId);
+        assertThat(result, is(jpaServiceInstance));
+    }
+
+    // getOperationServiceInstance Test IOException
+    @Test
+    public void getOperationServiceInstanceTest_2_3() throws Exception {
+        JpaServiceInstance jpaServiceInstance = new JpaServiceInstance();
+        String InstacneId = "Instance_id";
+        jpaServiceInstance.setAppGuid("app_guid");
+        Map map = new HashMap<>();
+        map.put("test","test");
+        when(jpaServiceInstanceRepository.findByServiceInstanceId(InstacneId)).thenReturn(jpaServiceInstance);
+        when(onDemandDeploymentService.runningTask("deployment_name",jpaServiceInstance)).thenReturn(true);
+        doThrow(IOException.class).when(cloudFoundryService).ServiceInstanceAppBinding("app_id","serviceInstance_id",map);
+        JpaServiceInstance result = onDemandInstanceService.getOperationServiceInstance(InstacneId);
+        assertThat(result, is(jpaServiceInstance));
+    }
+
+    // getOperationServiceInstance Test Exception
+    @Test
+    public void getOperationServiceInstanceTest_2_4() throws Exception {
+        JpaServiceInstance jpaServiceInstance = new JpaServiceInstance();
+        String InstacneId = "Instance_id";
+        jpaServiceInstance.setAppGuid("app_guid");
+        Map map = new HashMap<>();
+        map.put("test","test");
+        when(jpaServiceInstanceRepository.findByServiceInstanceId(InstacneId)).thenReturn(jpaServiceInstance);
+        when(onDemandDeploymentService.runningTask("deployment_name",jpaServiceInstance)).thenReturn(true);
+        doThrow(Exception.class).when(cloudFoundryService).ServiceInstanceAppBinding("app_id","serviceInstance_id",map);
         JpaServiceInstance result = onDemandInstanceService.getOperationServiceInstance(InstacneId);
         assertThat(result, is(jpaServiceInstance));
     }
