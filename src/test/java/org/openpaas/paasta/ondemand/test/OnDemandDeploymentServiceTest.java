@@ -11,6 +11,7 @@ import org.openpaas.paasta.bosh.director.BoshDirector;
 import org.openpaas.paasta.ondemand.config.BoshConfig;
 import org.openpaas.paasta.ondemand.model.DeploymentInstance;
 import org.openpaas.paasta.ondemand.model.JpaServiceInstance;
+import org.openpaas.paasta.ondemand.repo.JpaServiceInstanceRepository;
 import org.openpaas.paasta.ondemand.service.impl.OnDemandDeploymentService;
 import org.openpaas.servicebroker.exception.ServiceBrokerException;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -47,6 +48,9 @@ public class OnDemandDeploymentServiceTest {
 
     @Mock
     BoshDirector boshDirector;
+
+    @Mock
+    JpaServiceInstanceRepository jpaServiceInstanceRepository;
 
     @Mock
     private RestTemplate restTemplate;
@@ -87,6 +91,14 @@ public class OnDemandDeploymentServiceTest {
         when(boshDirector.getResultRetrieveTasksLog(task)).thenReturn(result);
         List<DeploymentInstance> deploymentInstances = onDemandDeploymentService.getVmInstance("deployment_name","instance_name");
         assertThat(deploymentInstances.get(0).getJobName(), is(result.get(0).get("job_name")));
+    }
+
+    // getVmInstance Test Exception
+    @Test
+    public void getVmInstance_test3() throws Exception {
+        doThrow(Exception.class).when(boshDirector).getListDetailOfInstances("deployment_name");
+        List<DeploymentInstance> deploymentInstances = onDemandDeploymentService.getVmInstance("deployment_name","instance_name");
+        assertThat(deploymentInstances, is(nullValue()));
     }
 
     //getLock_Exception TEST
@@ -161,6 +173,7 @@ public class OnDemandDeploymentServiceTest {
         param.add(map);
         jpaServiceInstance.setTaskId(null);
         when(boshDirector.getListRunningTasks()).thenReturn(param);
+        when(jpaServiceInstanceRepository.save(jpaServiceInstance)).thenReturn(jpaServiceInstance);
         boolean result = onDemandDeploymentService.runningTask("deployment_name",jpaServiceInstance);
         assertThat(result, is(false));
     }
