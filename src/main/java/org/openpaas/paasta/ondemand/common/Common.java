@@ -94,7 +94,7 @@ public class Common {
         return paastaTokenContext.tokenProvider();
     }
 
-    private boolean ContextAndTokenTimeOut(PaastaContextInterface paastaContextInterface, int timelimit){
+    public boolean ContextAndTokenTimeOut(PaastaContextInterface paastaContextInterface, int timelimit){
         Calendar now = Calendar.getInstance();
         Calendar create_time = Calendar.getInstance();
         create_time.setTime(paastaContextInterface.getCreate_time());

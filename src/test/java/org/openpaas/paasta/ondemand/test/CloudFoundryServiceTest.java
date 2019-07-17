@@ -56,11 +56,11 @@ public class CloudFoundryServiceTest {
         ReflectionTestUtils.setField(common, "adminUserName", "adminUserName");
         ReflectionTestUtils.setField(common, "adminPassword", "adminPassword");
         DefaultConnectionContext defaultConnectionContextBuild = DefaultConnectionContext.builder().apiHost("xx.xx.xx.xxx").skipSslValidation(true).build();
-        paastaConnectionContext = new PaastaConnectionContext(defaultConnectionContextBuild, new Date());
+//        paastaConnectionContext = new PaastaConnectionContext(defaultConnectionContextBuild, new Date());
         TokenProvider tokenProvider = PasswordGrantTokenProvider.builder().password("adminUserName").username("adminPassword").build();
-        reactorCloudFoundryClient = ReactorCloudFoundryClient.builder().connectionContext(paastaConnectionContext.getConnectionContext()).tokenProvider(tokenProvider).build();
-
-        common.paastaConnectionContext = paastaConnectionContext;
+        reactorCloudFoundryClient = ReactorCloudFoundryClient.builder().connectionContext(defaultConnectionContextBuild).tokenProvider(tokenProvider).build();
+//
+//        common.paastaConnectionContext = paastaConnectionContext;
 
     }
 
@@ -68,6 +68,7 @@ public class CloudFoundryServiceTest {
     public void ServiceInstanceAppBinding_test() throws Exception {
 
         //when(paastaConnectionContext.getCreate_time()).thenReturn(new Date());
+        when(cloudFoundryService.cloudFoundryClient()).thenReturn(reactorCloudFoundryClient);
         when(cloudFoundryService.ContextAndTokenTimeOut(paastaConnectionContext, 10)).thenReturn(false);
         cloudFoundryService.ServiceInstanceAppBinding("test","Instance_id" ,new HashMap<>());
 
