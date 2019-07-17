@@ -109,11 +109,11 @@ public class OnDemandInstanceService implements ServiceInstanceService {
                 }
                 String ips = "";
                 while (true) {
+                    Thread.sleep(1000);
                     ips = onDemandDeploymentService.getStartInstanceIPS(taskID, instance_name, dep.getId());
                     if (ips != null) {
                         break;
                     }
-                    Thread.sleep(1000);
                 }
                 jpaServiceInstance.setVmInstanceId(dep.getId());
                 jpaServiceInstance.setDashboardUrl(ips);
@@ -128,26 +128,25 @@ public class OnDemandInstanceService implements ServiceInstanceService {
                 Thread.sleep(1000);
                 taskID = onDemandDeploymentService.getTaskID(deployment_name);
                 if (taskID != null) {
-                    logger.info("taskID : " + taskID);
+                    logger.info("Create Instance taskID : " + taskID);
                     break;
                 }
             }
             String ips = "";
             while (true) {
+                Thread.sleep(1000);
                 ips = onDemandDeploymentService.getUpdateInstanceIPS(taskID);
                 if (ips != null) {
                     break;
                 }
-                Thread.sleep(1000);
-
             }
             String instanceId = "";
             while (true) {
+                Thread.sleep(1000);
                 instanceId = onDemandDeploymentService.getUpdateVMInstanceID(taskID, instance_name);
                 if (instanceId != null) {
                     break;
                 }
-                Thread.sleep(1000);
             }
             jpaServiceInstance.setDashboardUrl(ips);
             jpaServiceInstance.setVmInstanceId(instanceId);

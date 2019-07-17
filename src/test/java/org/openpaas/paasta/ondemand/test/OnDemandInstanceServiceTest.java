@@ -212,7 +212,8 @@ public class OnDemandInstanceServiceTest {
         getVmInstance.add(DeploymentInstanceModel.getDeploymentDetachedInstance());
         when(onDemandDeploymentService.getVmInstance("deployment_name", "instance_name")).thenReturn(getVmInstance);
         when(onDemandDeploymentService.getLock("deployment_name")).thenReturn(false);
-        when(onDemandDeploymentService.getTaskID("deployment_name")).thenReturn(null);
+        when(onDemandDeploymentService.getTaskID("deployment_name")).thenReturn("task_id");
+        when(onDemandDeploymentService.getStartInstanceIPS("task_id","iinstance_name","instance_id")).thenReturn(null);
     }
 
     //Detach VM Instance Create Test
@@ -245,8 +246,8 @@ public class OnDemandInstanceServiceTest {
         when(onDemandDeploymentService.getVmInstance("deployment_name", "instance_name")).thenReturn(getVmInstance);
         when(onDemandDeploymentService.getLock("deployment_name")).thenReturn(false);
         Mockito.doCallRealMethod().when(onDemandDeploymentService).createInstance("deployment_name","instance_name");
-        onDemandDeploymentService.createInstance("deployment_name","instance_name");
         when(onDemandDeploymentService.getTaskID("deployment_name")).thenReturn(null);
+        onDemandDeploymentService.createInstance("deployment_name","instance_name");
     }
 
     //Detach VM Instance Create Sleep Test
@@ -259,9 +260,9 @@ public class OnDemandInstanceServiceTest {
         when(onDemandDeploymentService.getVmInstance("deployment_name", "instance_name")).thenReturn(getVmInstance);
         when(onDemandDeploymentService.getLock("deployment_name")).thenReturn(false);
         Mockito.doCallRealMethod().when(onDemandDeploymentService).createInstance("deployment_name","instance_name");
-        onDemandDeploymentService.createInstance("deployment_name","instance_name");
         when(onDemandDeploymentService.getTaskID("deployment_name")).thenReturn(taskId);
         when(onDemandDeploymentService.getUpdateInstanceIPS(taskId)).thenReturn(null);
+        onDemandDeploymentService.createInstance("deployment_name","instance_name");
     }
 
     //Detach VM Instance Create Test
