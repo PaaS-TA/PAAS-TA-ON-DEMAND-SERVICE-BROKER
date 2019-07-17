@@ -96,7 +96,6 @@ public class OnDemandCatalogServiceTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andReturn();
     }
@@ -122,7 +121,6 @@ public class OnDemandCatalogServiceTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andReturn();
     }
@@ -150,7 +148,6 @@ public class OnDemandCatalogServiceTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andReturn();
     }
