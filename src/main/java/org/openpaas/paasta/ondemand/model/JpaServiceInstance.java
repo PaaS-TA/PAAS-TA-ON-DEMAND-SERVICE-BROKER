@@ -102,24 +102,6 @@ public class JpaServiceInstance extends ServiceInstance {
         setApp_parameter(param.get());
     }
 
-    public JpaServiceInstance(DeleteServiceInstanceRequest request) {
-        super(request);
-
-        setServiceDefinitionId(request.getServiceId());
-        setServiceInstanceId(request.getServiceInstanceId());
-        setPlanId(request.getPlanId());
-    }
-
-    public JpaServiceInstance(UpdateServiceInstanceRequest request) {
-        // service (definition) id, service instance id, plan id
-        super(request);
-
-        setServiceDefinitionId(request.getServiceDefinitionId());
-        setServiceInstanceId(request.getServiceInstanceId());
-        setPlanId(request.getPlanId());
-    }
-
-
     @Override
     public String getDashboardUrl() {
         return dashboardUrl;

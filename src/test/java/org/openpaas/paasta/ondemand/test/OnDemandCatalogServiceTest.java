@@ -10,6 +10,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openpaas.paasta.ondemand.config.BrokerConfig;
 import org.openpaas.paasta.ondemand.config.CatalogConfig;
+import org.openpaas.paasta.ondemand.config.RestTemplateConfig;
 import org.openpaas.servicebroker.controller.CatalogController;
 import org.openpaas.servicebroker.model.Catalog;
 import org.openpaas.servicebroker.service.CatalogService;
@@ -19,6 +20,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Base64;
 
@@ -47,17 +49,23 @@ public class OnDemandCatalogServiceTest {
     @Spy
     BrokerConfig brokerConfig;
 
+    @Spy
+    RestTemplateConfig restTemplateConfig;
+
     private MockMvc mockMvc;
 
     private Catalog catalog;
 
     private String basicAuth;
 
+    private RestTemplate resttemplate;
+
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
         basicAuth = "Basic " + (Base64.getEncoder().encodeToString(("admin" + ":" + "cloudfoundry").getBytes()));
+        resttemplate = restTemplateConfig.restTemplate();
         // CatalogController 를 MockMvC 객체로 만듬.
         this.mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
