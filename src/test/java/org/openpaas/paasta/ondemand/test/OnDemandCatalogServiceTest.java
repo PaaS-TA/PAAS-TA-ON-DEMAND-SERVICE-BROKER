@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
+import org.openpaas.paasta.ondemand.config.BrokerConfig;
 import org.openpaas.paasta.ondemand.config.CatalogConfig;
 import org.openpaas.servicebroker.controller.CatalogController;
 import org.openpaas.servicebroker.model.Catalog;
@@ -42,6 +43,9 @@ public class OnDemandCatalogServiceTest {
 
     @Spy
     CatalogConfig catalogConfig;
+
+    @Spy
+    BrokerConfig brokerConfig;
 
     private MockMvc mockMvc;
 
