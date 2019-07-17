@@ -119,24 +119,17 @@ public class CatalogConfig {
 	private List<Map<String, Object>> getCosts(String planType) {
 		Map<String, Object> costsMap = new HashMap<>();
 		Map<String, Object> amount = new HashMap<>();
-
+		costsMap.put("amount", amount);
+		costsMap.put("unit", "MONTHLY");
 		switch (planType) {
 			case "A":
 				amount.put("usd", 0.0);
-				costsMap.put("amount", amount);
-				costsMap.put("unit", "MONTHLY");
-
 				break;
 			case "B":
 				amount.put("usd", 10.0);
-				costsMap.put("amount", amount);
-				costsMap.put("unit", "MONTHLY");
-
 				break;
 			default:
 				amount.put("usd", 100.0);
-				costsMap.put("amount", amount);
-				costsMap.put("unit", "MONTHLY");
 				break;
 		}
 

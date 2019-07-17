@@ -93,6 +93,19 @@ public class OnDemandDeploymentServiceTest {
         assertThat(deploymentInstances.get(0).getJobName(), is(result.get(0).get("job_name")));
     }
 
+    @Test
+    public void getVmInstance_test2_1() throws Exception {
+        String task = "";
+        List<Map> result = new ArrayList<>();
+        Map map = new HashMap();
+        map.put("job_name","not_instance_name");
+        result.add(map);
+        when(boshDirector.getListDetailOfInstances("deployment_name")).thenReturn(task);
+        when(boshDirector.getResultRetrieveTasksLog(task)).thenReturn(result);
+        List<DeploymentInstance> deploymentInstances = onDemandDeploymentService.getVmInstance("deployment_name","instance_name");
+        assertThat(deploymentInstances.isEmpty(), is(true));
+    }
+
     // getVmInstance Test Exception
     @Test
     public void getVmInstance_test3() throws Exception {
