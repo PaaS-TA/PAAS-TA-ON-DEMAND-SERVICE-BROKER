@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -117,17 +118,17 @@ public class OnDemandDeploymentServiceTest {
 
 
 
-    //updateInstanceState TEST True
+    //updateInstanceState TEST
     @Test
     public void updateInstanceState_test1() throws Exception {
         when(boshDirector.updateInstanceState("deployment_name","instance_name","instance_id","type")).thenReturn(true);
         onDemandDeploymentService.updateInstanceState("deployment_name","instance_name","instance_id","type");
     }
 
-    //updateInstanceState TEST Exception
+    //updateInstanceState TEST
     @Test
     public void updateInstanceState_test2() throws Exception {
-        when(boshDirector.updateInstanceState("deployment_name","instance_name","instance_id","type")).thenReturn(false);
+         doThrow(Exception.class).when(boshDirector).updateInstanceState("deployment_name","instance_name","instance_id","type");
         onDemandDeploymentService.updateInstanceState("deployment_name","instance_name","instance_id","type");
     }
 
@@ -179,4 +180,99 @@ public class OnDemandDeploymentServiceTest {
         assertThat(result, is(true));
     }
 
+    //getTaskID TEST Exception
+    @Test
+    public void getTaskID_test1() throws Exception {
+        when(boshDirector.getListRunningTasks()).thenReturn(null);
+        String result = onDemandDeploymentService.getTaskID("deployment_name");
+        assertThat(result, is(nullValue()));
+    }
+
+    //getTaskID TEST result null
+    @Test
+    public void getTaskID_test2() throws Exception {
+        Map map = new HashMap();
+        map.put("deployment", "not_deployment_name");
+        map.put("id", "instance_name");
+        List<Map> param = new ArrayList<>();
+        param.add(map);
+        when(boshDirector.getListRunningTasks()).thenReturn(param);
+        String result = onDemandDeploymentService.getTaskID("deployment_name");
+        assertThat(result, is(nullValue()));
+    }
+
+    //getTaskID TEST result instance_id
+    @Test
+    public void getTaskID_test3() throws Exception {
+        Map map = new HashMap();
+        map.put("deployment", "deployment_name");
+        map.put("id", "instance_id");
+        List<Map> param = new ArrayList<>();
+        param.add(map);
+        when(boshDirector.getListRunningTasks()).thenReturn(param);
+        String result = onDemandDeploymentService.getTaskID("deployment_name");
+        assertThat(result, is("instance_id"));
+    }
+    //getTaskID TEST Exception
+    @Test
+    public void getStartInstanceIPS_test1() throws Exception {
+        doThrow(Exception.class).when(boshDirector).getStartVMIPS("task_id","instance_name", "instance_id");
+        String result = onDemandDeploymentService.getStartInstanceIPS("task_id","instance_name", "instance_id");
+        assertThat(result, is(nullValue()));
+    }
+
+    //getTaskID TEST
+    @Test
+    public void getStartInstanceIPS_test2() throws Exception {
+        when(boshDirector.getStartVMIPS("task_id","instance_name", "instance_id")).thenReturn("result");
+        String result = onDemandDeploymentService.getStartInstanceIPS("task_id","instance_name", "instance_id");
+        assertThat(result, is("result"));
+    }
+
+    //createInstance TEST Exception
+    @Test
+    public void createInstance_test1() throws Exception {
+        doThrow(Exception.class).when(boshDirector).deploy("deployment_name","instance_name");
+        onDemandDeploymentService.createInstance("deployment_name","instance_name");
+
+    }
+
+    //createInstance TEST
+    @Test
+    public void createInstance_test2() throws Exception {
+        when(boshDirector.deploy("deployment_name","instance_name")).thenReturn(true);
+        onDemandDeploymentService.createInstance("deployment_name","instance_name");
+    }
+
+    //getUpdateInstanceIPS TEST Exception
+    @Test
+    public void getUpdateInstanceIPS_test1() throws Exception {
+        doThrow(Exception.class).when(boshDirector).getUpdateVMIPS("task_id");
+        String result = onDemandDeploymentService.getUpdateInstanceIPS("task_id");
+        assertThat(result, is(nullValue()));
+    }
+
+    //getUpdateInstanceIPS TEST
+    @Test
+    public void getUpdateInstanceIPS_test2() throws Exception {
+        when(boshDirector.getUpdateVMIPS("task_id")).thenReturn("result");
+        String result = onDemandDeploymentService.getUpdateInstanceIPS("task_id");
+        assertThat(result, is("result"));
+    }
+
+    //getUpdateInstanceIPS TEST Exception
+    @Test
+    public void getUpdateVMInstanceID_test1() throws Exception {
+        doThrow(Exception.class).when(boshDirector).getUpdateVMInstance("task_id", "instance_name");
+        String result = onDemandDeploymentService.getUpdateVMInstanceID("task_id", "instance_name");
+        assertThat(result, is(nullValue()));
+    }
+
+    //getUpdateInstanceIPS TEST
+    @Test
+    public void getUpdateVMInstanceID_test2() throws Exception {
+        when(boshDirector.getUpdateVMInstance("task_id", "instance_name")).thenReturn("result");
+        String result = onDemandDeploymentService.getUpdateVMInstanceID("task_id", "instance_name");
+        assertThat(result, is("result"));
+    }
 }

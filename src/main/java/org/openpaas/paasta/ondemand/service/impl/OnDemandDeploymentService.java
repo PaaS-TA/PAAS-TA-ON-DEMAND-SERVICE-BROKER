@@ -3,13 +3,11 @@ package org.openpaas.paasta.ondemand.service.impl;
 
 import com.google.gson.Gson;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.openpaas.paasta.bosh.director.BoshDirector;
 import org.openpaas.paasta.ondemand.model.DeploymentInstance;
 import org.openpaas.paasta.ondemand.model.DeploymentLock;
 import org.openpaas.paasta.ondemand.model.JpaServiceInstance;
 import org.openpaas.paasta.ondemand.repo.JpaServiceInstanceRepository;
-import org.openpaas.servicebroker.model.CreateServiceInstanceRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,9 +72,7 @@ public class OnDemandDeploymentService {
 
     public void updateInstanceState(String deployment_name, String instance_name, String instance_id, String type) {
         try {
-                if(boshDirector.updateInstanceState(deployment_name, instance_name, instance_id, type) == false){
-                    throw new Exception(deployment_name+" Update Error");
-                }
+                boshDirector.updateInstanceState(deployment_name, instance_name, instance_id, type);
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
@@ -122,9 +118,9 @@ public class OnDemandDeploymentService {
         try {
             return boshDirector.getStartVMIPS(taks_id, instance_name, instance_id);
         } catch (Exception e) {
-
+            logger.error(e.getMessage());
+            return null;
         }
-        return null;
     }
 
     public void createInstance(String deployment_name, String instance_name) throws Exception {
@@ -139,6 +135,7 @@ public class OnDemandDeploymentService {
         try {
             return boshDirector.getUpdateVMIPS(task_id);
         } catch (Exception e) {
+            logger.error(e.getMessage());
             return null;
         }
     }
@@ -147,6 +144,7 @@ public class OnDemandDeploymentService {
         try {
             return boshDirector.getUpdateVMInstance(task_id, instance_name);
         } catch (Exception e) {
+            logger.error(e.getMessage());
             return null;
         }
     }
