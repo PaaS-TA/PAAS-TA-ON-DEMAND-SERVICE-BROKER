@@ -25,8 +25,6 @@ public class OnDemandDeploymentService {
 
     private static final Logger logger = LoggerFactory.getLogger(OnDemandDeploymentService.class);
 
-    private static boolean deployment_job = true;
-
     private BoshDirector boshDirector;
 
     @Autowired
@@ -59,7 +57,6 @@ public class OnDemandDeploymentService {
     public boolean getLock(String deployment_name) {
         try {
             String locks = boshDirector.getListLocks();
-            try {
                 JSONArray jsonArray = new JSONArray(locks);
                 for (int i = 0; i < jsonArray.length(); i++) {
                     String json = jsonArray.get(i).toString();
@@ -68,20 +65,20 @@ public class OnDemandDeploymentService {
                         return true;
                     }
                 }
-            } catch (JSONException e) {
-                return false;
-            }
         } catch (Exception e) {
+            logger.error(e.getMessage());
+            return false;
         }
         return false;
     }
 
     public void updateInstanceState(String deployment_name, String instance_name, String instance_id, String type) {
         try {
-            if (deployment_job) {
-                boshDirector.updateInstanceState(deployment_name, instance_name, instance_id, type);
-            }
+                if(boshDirector.updateInstanceState(deployment_name, instance_name, instance_id, type) == false){
+                    throw new Exception(deployment_name+" Update Error");
+                }
         } catch (Exception e) {
+            logger.error(e.getMessage());
         }
     }
 
