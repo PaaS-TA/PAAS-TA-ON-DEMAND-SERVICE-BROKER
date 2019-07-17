@@ -51,3 +51,6 @@ cloudfoundry:
       username: admin # YOUR CF ADMIN ACCOUT
       password:  # YOUR CF ADMIN PASSWORD
 
+instance:
+  password:
+  port:
