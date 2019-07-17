@@ -357,51 +357,6 @@ public class OnDemandInstanceServiceTest {
         assertThat(result, is(jpaServiceInstance));
     }
 
-    // getOperationServiceInstance Test JsonParseException
-    @Test
-    public void getOperationServiceInstanceTest_2_1() throws Exception {
-        JpaServiceInstance jpaServiceInstance = new JpaServiceInstance();
-        String InstacneId = "Instance_id";
-        jpaServiceInstance.setAppGuid("app_guid");
-        Map map = new HashMap<>();
-        map.put("test","test");
-        when(jpaServiceInstanceRepository.findByServiceInstanceId(InstacneId)).thenReturn(jpaServiceInstance);
-        when(onDemandDeploymentService.runningTask("deployment_name",jpaServiceInstance)).thenReturn(true);
-        doThrow(JsonParseException.class).when(cloudFoundryService).ServiceInstanceAppBinding("app_id","serviceInstance_id",map);
-        JpaServiceInstance result = onDemandInstanceService.getOperationServiceInstance(InstacneId);
-        assertThat(result, is(jpaServiceInstance));
-    }
-
-    // getOperationServiceInstance Test JsonMappingException
-    @Test
-    public void getOperationServiceInstanceTest_2_2() throws Exception {
-        JpaServiceInstance jpaServiceInstance = new JpaServiceInstance();
-        String InstacneId = "Instance_id";
-        jpaServiceInstance.setAppGuid("app_guid");
-        Map map = new HashMap<>();
-        map.put("test","test");
-        when(jpaServiceInstanceRepository.findByServiceInstanceId(InstacneId)).thenReturn(jpaServiceInstance);
-        when(onDemandDeploymentService.runningTask("deployment_name",jpaServiceInstance)).thenReturn(true);
-        doThrow(JsonMappingException.class).when(cloudFoundryService).ServiceInstanceAppBinding("app_id","serviceInstance_id",map);
-        JpaServiceInstance result = onDemandInstanceService.getOperationServiceInstance(InstacneId);
-        assertThat(result, is(jpaServiceInstance));
-    }
-
-    // getOperationServiceInstance Test IOException
-    @Test
-    public void getOperationServiceInstanceTest_2_3() throws Exception {
-        JpaServiceInstance jpaServiceInstance = new JpaServiceInstance();
-        String InstacneId = "Instance_id";
-        jpaServiceInstance.setAppGuid("app_guid");
-        Map map = new HashMap<>();
-        map.put("test","test");
-        when(jpaServiceInstanceRepository.findByServiceInstanceId(InstacneId)).thenReturn(jpaServiceInstance);
-        when(onDemandDeploymentService.runningTask("deployment_name",jpaServiceInstance)).thenReturn(true);
-        doThrow(IOException.class).when(cloudFoundryService).ServiceInstanceAppBinding("app_id","serviceInstance_id",map);
-        JpaServiceInstance result = onDemandInstanceService.getOperationServiceInstance(InstacneId);
-        assertThat(result, is(jpaServiceInstance));
-    }
-
     // getOperationServiceInstance Test Exception
     @Test
     public void getOperationServiceInstanceTest_2_4() throws Exception {

@@ -1,8 +1,6 @@
 package org.openpaas.paasta.ondemand.service.impl;
 
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openpaas.paasta.bosh.director.BoshDirector;
 import org.openpaas.paasta.ondemand.exception.OndemandServiceException;
@@ -20,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -209,12 +206,6 @@ public class OnDemandInstanceService implements ServiceInstanceService {
                     if (instance.getAppGuid() != null) {
                         cloudFoundryService.ServiceInstanceAppBinding(instance.getAppGuid(), instance.getServiceInstanceId(), (Map) this.objectMapper.readValue(instance.getApp_parameter(), Map.class));
                     }
-                }  catch (JsonParseException e) {
-                    logger.error(e.getMessage());
-                } catch (JsonMappingException e) {
-                    logger.error(e.getMessage());
-                } catch (IOException e) {
-                    logger.error(e.getMessage());
                 } catch (Exception e) {
                     logger.error(e.getMessage());
                 }
