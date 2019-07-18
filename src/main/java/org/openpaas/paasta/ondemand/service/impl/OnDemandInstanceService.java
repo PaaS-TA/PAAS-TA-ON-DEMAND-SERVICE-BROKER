@@ -3,6 +3,7 @@ package org.openpaas.paasta.ondemand.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.cloudfoundry.client.v2.applications.ApplicationsV2;
+import org.cloudfoundry.client.v2.securitygroups.SecurityGroups;
 import org.cloudfoundry.client.v2.servicebindings.ServiceBindingsV2;
 import org.openpaas.paasta.bosh.director.BoshDirector;
 import org.openpaas.paasta.ondemand.common.Common;
@@ -88,7 +89,8 @@ public class OnDemandInstanceService implements ServiceInstanceService {
                     jpaServiceInstance.setDashboardUrl(dep.getIps().substring(1,dep.getIps().length()-1));
                     jpaServiceInstanceRepository.save(jpaServiceInstance);
                     jpaServiceInstance.withAsync(true);
-                    cloudFoundryService.SecurityGurop(request.getSpaceGuid(), jpaServiceInstance.getDashboardUrl());
+                    SecurityGroups securityGroups = common.cloudFoundryClient().securityGroups();
+                    cloudFoundryService.SecurityGurop(request.getSpaceGuid(), jpaServiceInstance.getDashboardUrl(), securityGroups);
                     logger.info("서비스 인스턴스 생성");
                     return jpaServiceInstance;
                 }
@@ -122,7 +124,8 @@ public class OnDemandInstanceService implements ServiceInstanceService {
                 jpaServiceInstance.setDashboardUrl(ips);
                 jpaServiceInstanceRepository.save(jpaServiceInstance);
                 jpaServiceInstance.withAsync(true);
-                cloudFoundryService.SecurityGurop(request.getSpaceGuid(), jpaServiceInstance.getDashboardUrl());
+                SecurityGroups securityGroups = common.cloudFoundryClient().securityGroups();
+                cloudFoundryService.SecurityGurop(request.getSpaceGuid(), jpaServiceInstance.getDashboardUrl(), securityGroups);
                 return jpaServiceInstance;
             }
 
@@ -155,7 +158,8 @@ public class OnDemandInstanceService implements ServiceInstanceService {
             jpaServiceInstance.setVmInstanceId(instanceId);
             jpaServiceInstanceRepository.save(jpaServiceInstance);
             jpaServiceInstance.withAsync(true);
-            cloudFoundryService.SecurityGurop(request.getSpaceGuid(), jpaServiceInstance.getDashboardUrl());
+            SecurityGroups securityGroups = common.cloudFoundryClient().securityGroups();
+            cloudFoundryService.SecurityGurop(request.getSpaceGuid(), jpaServiceInstance.getDashboardUrl(), securityGroups);
             return jpaServiceInstance;
         } catch (Exception e) {
             throw new ServiceBrokerException(e.getMessage());
@@ -183,6 +187,7 @@ public class OnDemandInstanceService implements ServiceInstanceService {
                         continue;
                     }
                     onDemandDeploymentService.updateInstanceState(deployment_name, instance_name, instance.getVmInstanceId(), BoshDirector.INSTANCE_STATE_DETACHED);
+                    cloudFoundryService.DelSecurityGurop(instance.getSpaceGuid(), instance.getDashboardUrl());
                     logger.info("VM DETACHED SUCCEED : VM_ID : " + instance.getVmInstanceId());
                     break;
                 }

@@ -4,6 +4,7 @@ import org.cloudfoundry.client.v2.Metadata;
 import org.cloudfoundry.client.v2.applications.ApplicationsV2;
 import org.cloudfoundry.client.v2.applications.RestageApplicationRequest;
 import org.cloudfoundry.client.v2.applications.RestageApplicationResponse;
+import org.cloudfoundry.client.v2.securitygroups.*;
 import org.cloudfoundry.client.v2.servicebindings.CreateServiceBindingRequest;
 import org.cloudfoundry.client.v2.servicebindings.CreateServiceBindingResponse;
 import org.cloudfoundry.client.v2.servicebindings.ServiceBindingEntity;
@@ -30,7 +31,9 @@ import org.springframework.web.client.RestTemplate;
 import reactor.core.publisher.Mono;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 
@@ -62,34 +65,77 @@ public class CloudFoundryServiceTest {
         ReflectionTestUtils.setField(common, "cfskipSSLValidation", true);
         ReflectionTestUtils.setField(common, "adminUserName", "admin");
         ReflectionTestUtils.setField(common, "adminPassword", "password");
-//        defaultConnectionContextBuild = DefaultConnectionContext.builder().apiHost("api.xxx.xx.xx.xxx.xip.io").skipSslValidation(true).build();
-////        paastaConnectionContext = new PaastaConnectionContext(defaultConnectionContextBuild, new Date());
-//        TokenProvider tokenProvider = PasswordGrantTokenProvider.builder().password("admin").username("password").build();
-//        reactorCloudFoundryClient = ReactorCloudFoundryClient.builder().connectionContext(defaultConnectionContextBuild).tokenProvider(tokenProvider).build();
-//
-//        common.paastaConnectionContext = paastaConnectionContext;
-
+        ReflectionTestUtils.setField(cloudFoundryService, "instance_name", "instance_name");
     }
 
     @Test
     public void ServiceInstanceAppBinding_test() throws Exception {
-
-//        when(common.defaultConnectionContextBuild("apiTarget", true)).thenReturn(defaultConnectionContextBuild);
-//        when(common.cloudFoundryClient()).thenReturn(reactorCloudFoundryClient);
-//        when(common.ContextAndTokenTimeOut(paastaConnectionContext, 10)).thenReturn(false);
-//        when(common.ContextAndTokenTimeOut(paastaConnectionContext, 10)).thenReturn(false);
-        //ReactorCloudFoundryClient reactorCloudFoundryClient2 = mock(ReactorCloudFoundryClient.class, RETURNS_SMART_NULLS);
         ServiceBindingsV2 serviceBindingsV2 = mock(ServiceBindingsV2.class, RETURNS_SMART_NULLS);
         ApplicationsV2 applicationsV2 = mock(ApplicationsV2.class, RETURNS_SMART_NULLS);
         when(serviceBindingsV2.create(CreateServiceBindingRequest.builder().applicationId("test")
                 .serviceInstanceId("Instance_id").parameters(new HashMap<>()).build())).thenReturn(Mono.just(CreateServiceBindingResponse.builder().metadata(Metadata.builder().id("hello").build()).entity(ServiceBindingEntity.builder().name("test").build()).build()));
         when(applicationsV2.restage(RestageApplicationRequest.builder().applicationId("test").build())).thenReturn(Mono.just(RestageApplicationResponse.builder().build()));
-
-
-
-
-
         cloudFoundryService.ServiceInstanceAppBinding("test","Instance_id" ,new HashMap<>(), serviceBindingsV2, applicationsV2);
+    }
 
+    @Test
+    public void SecurityGurop_test() throws Exception {
+        SecurityGroups securityGroups = mock(SecurityGroups.class, RETURNS_SMART_NULLS);
+        when(securityGroups.list(ListSecurityGroupsRequest.builder().build())).thenReturn(Mono.just(ListSecurityGroupsResponse.builder().totalPages(1).resources(SecurityGroupResource.builder().entity(
+                SecurityGroupEntity.builder().name("Entity_test").build()
+        ).metadata(
+                Metadata.builder().id("id_test").build()
+        ).build()).build()));
+        when(securityGroups.create(CreateSecurityGroupRequest.builder().rule(RuleEntity.builder()
+                .protocol(Protocol.ALL)
+                .destination("11.11.11.111")
+                .build())
+                .spaceId("space_id").name("instance_name_space_id").build())).thenReturn(Mono.just(CreateSecurityGroupResponse.builder().build()));
+        cloudFoundryService.SecurityGurop("space_id","11.11.11.111", securityGroups);
+    }
+
+    @Test
+    public void SecurityGurop_test1() throws Exception {
+        SecurityGroups securityGroups = mock(SecurityGroups.class, RETURNS_SMART_NULLS);
+        when(securityGroups.list(ListSecurityGroupsRequest.builder().build())).thenReturn(Mono.just(ListSecurityGroupsResponse.builder().totalPages(1).resources(SecurityGroupResource.builder().entity(
+                SecurityGroupEntity.builder().name("instance_name_space_id").build()
+        ).metadata(
+                Metadata.builder().id("id_test").build()
+        ).build()).build()));
+        cloudFoundryService.SecurityGurop("space_id","11.11.11.111", securityGroups);
+    }
+
+    @Test
+    public void SecurityGurop_test2() throws Exception {
+        SecurityGroups securityGroups = mock(SecurityGroups.class, RETURNS_SMART_NULLS);
+        List<SecurityGroupResource> securityGroupResources = new ArrayList<>();
+        securityGroupResources.add(
+                SecurityGroupResource.builder().entity(
+                        SecurityGroupEntity.builder().name("Entity_test").build()
+                ).metadata(
+                        Metadata.builder().id("id_test").build()
+                ).build()
+        );
+        securityGroupResources.add(
+                SecurityGroupResource.builder().entity(
+                        SecurityGroupEntity.builder().name("instance_name_space_id").build()
+                ).metadata(
+                        Metadata.builder().id("id_test").build()
+                ).build()
+        );
+        when(securityGroups.list(ListSecurityGroupsRequest.builder().build())).thenReturn(Mono.just(ListSecurityGroupsResponse.builder().totalPages(2).resources( SecurityGroupResource.builder().entity(
+                SecurityGroupEntity.builder().name("Entity_test").build()
+        ).metadata(
+                Metadata.builder().id("id_test").build()
+        ).build()).build()));
+        when(securityGroups.list(ListSecurityGroupsRequest.builder().page(2).build())).thenReturn(Mono.just(ListSecurityGroupsResponse.builder().totalPages(2).resources(securityGroupResources).build()));
+        when(securityGroups.create(CreateSecurityGroupRequest.builder().rule(RuleEntity.builder()
+                .protocol(Protocol.ALL)
+                .destination("11.11.11.111")
+                .build())
+                .spaceId("space_id").name("instance_name_space_id").build())).thenReturn(Mono.just(CreateSecurityGroupResponse.builder().build()));
+        cloudFoundryService.SecurityGurop("space_id","11.11.11.111", securityGroups);
     }
 }
+
+

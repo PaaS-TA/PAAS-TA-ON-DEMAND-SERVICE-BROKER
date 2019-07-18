@@ -6,8 +6,14 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import model.DeploymentInstanceModel;
 import model.ServiceInstanceModel;
 import model.ServiceInstanceRequestModel;
+import org.cloudfoundry.client.CloudFoundryClient;
 import org.cloudfoundry.client.v2.applications.ApplicationsV2;
+import org.cloudfoundry.client.v2.securitygroups.SecurityGroups;
 import org.cloudfoundry.client.v2.servicebindings.ServiceBindingsV2;
+import org.cloudfoundry.reactor.ConnectionContext;
+import org.cloudfoundry.reactor.DefaultConnectionContext;
+import org.cloudfoundry.reactor.TokenProvider;
+import org.cloudfoundry.reactor.client.ReactorCloudFoundryClient;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
@@ -16,6 +22,7 @@ import org.junit.runners.MethodSorters;
 import org.mockito.*;
 import org.mockito.invocation.InvocationOnMock;
 import org.openpaas.paasta.bosh.director.BoshDirector;
+import org.openpaas.paasta.ondemand.common.Common;
 import org.openpaas.paasta.ondemand.model.DeploymentInstance;
 import org.openpaas.paasta.ondemand.model.JpaServiceInstance;
 import org.openpaas.paasta.ondemand.repo.JpaServiceInstanceRepository;
@@ -75,6 +82,9 @@ public class OnDemandInstanceServiceTest {
 
     @Mock
     private Executor serviceBExecutorService;
+
+    @Mock
+    Common common;
     // My class in which I want to inject the mocks
     @InjectMocks
     private CompletableFuture service;
@@ -234,6 +244,14 @@ public class OnDemandInstanceServiceTest {
         when(onDemandDeploymentService.getTaskID("deployment_name")).thenReturn(taskId);
         when(onDemandDeploymentService.getUpdateInstanceIPS(taskId)).thenReturn(ips);
         when(onDemandDeploymentService.getUpdateVMInstanceID(taskId,"instance_name")).thenReturn(instance_id);
+        SecurityGroups securityGroups = mock(SecurityGroups.class, RETURNS_SMART_NULLS);
+        CloudFoundryClient cloudFoundryClient = mock(CloudFoundryClient.class, RETURNS_SMART_NULLS);
+        DefaultConnectionContext connectionContext = DefaultConnectionContext.builder().apiHost("xx.xx.xx.xxx").build();
+        TokenProvider tokenProvider = mock(TokenProvider.class, RETURNS_SMART_NULLS);
+        ReactorCloudFoundryClient reactorCloudFoundryClient = ReactorCloudFoundryClient.builder().connectionContext(connectionContext).tokenProvider(tokenProvider).build();
+        when(common.connectionContext()).thenReturn(connectionContext);
+        when(common.cloudFoundryClient()).thenReturn(reactorCloudFoundryClient);
+
         JpaServiceInstance result = onDemandInstanceService.createServiceInstance(request);
         assertThat(result.getVmInstanceId(), is(instance_id));
         assertThat(result.getDashboardUrl(), is(ips));
