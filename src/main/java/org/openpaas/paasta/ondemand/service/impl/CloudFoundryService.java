@@ -1,12 +1,15 @@
 package org.openpaas.paasta.ondemand.service.impl;
 
+import org.cloudfoundry.client.v2.applications.ApplicationsV2;
 import org.cloudfoundry.client.v2.applications.RestageApplicationRequest;
 import org.cloudfoundry.client.v2.securitygroups.*;
 import org.cloudfoundry.client.v2.servicebindings.CreateServiceBindingRequest;
+import org.cloudfoundry.client.v2.servicebindings.ServiceBindingsV2;
 import org.cloudfoundry.reactor.client.ReactorCloudFoundryClient;
 import org.openpaas.paasta.ondemand.common.Common;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -16,23 +19,28 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class CloudFoundryService extends Common {
+public class CloudFoundryService {
 
     @Value("${bosh.instance_name}")
     public String instance_name;
 
+    @Autowired
+    Common common;
+
     private static final Logger logger = LoggerFactory.getLogger(CloudFoundryService.class);
 
-    public void ServiceInstanceAppBinding(String AppId, String ServiceInstanceId, Map parameters) throws Exception{
-        ReactorCloudFoundryClient reactorCloudFoundryClient = cloudFoundryClient();
-        reactorCloudFoundryClient.serviceBindingsV2()
-                .create(CreateServiceBindingRequest.builder().applicationId(AppId)
+    public void ServiceInstanceAppBinding(String AppId, String ServiceInstanceId, Map parameters, ServiceBindingsV2 serviceBindingV2, ApplicationsV2 applicationsV2) throws Exception{
+//        ReactorCloudFoundryClient reactorCloudFoundryClient = common.cloudFoundryClient();
+//        reactorCloudFoundryClient.serviceBindingsV2()
+//                .create(CreateServiceBindingRequest.builder().applicationId(AppId)
+//                        .serviceInstanceId(ServiceInstanceId).parameters(parameters).build()).block();
+        serviceBindingV2.create(CreateServiceBindingRequest.builder().applicationId(AppId)
                         .serviceInstanceId(ServiceInstanceId).parameters(parameters).build()).block();
-        reactorCloudFoundryClient.applicationsV2().restage(RestageApplicationRequest.builder().applicationId(AppId).build()).block();
+        applicationsV2.restage(RestageApplicationRequest.builder().applicationId(AppId).build()).block();
     }
 
     public void SecurityGurop(String space_id, String url) throws Exception{
-        ReactorCloudFoundryClient reactorCloudFoundryClient = cloudFoundryClient();
+        ReactorCloudFoundryClient reactorCloudFoundryClient = common.cloudFoundryClient();
         /*
         시큐리티 그룹 조회
          */
@@ -77,7 +85,7 @@ public class CloudFoundryService extends Common {
     }
 
     public void DelSecurityGurop(String space_id, String url){
-        ReactorCloudFoundryClient reactorCloudFoundryClient = cloudFoundryClient();
+        ReactorCloudFoundryClient reactorCloudFoundryClient = common.cloudFoundryClient();
         /*
         시큐리티 그룹 조회
          */

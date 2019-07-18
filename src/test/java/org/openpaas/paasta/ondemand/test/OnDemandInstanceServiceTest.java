@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import model.DeploymentInstanceModel;
 import model.ServiceInstanceModel;
 import model.ServiceInstanceRequestModel;
+import org.cloudfoundry.client.v2.applications.ApplicationsV2;
+import org.cloudfoundry.client.v2.servicebindings.ServiceBindingsV2;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
@@ -351,7 +353,9 @@ public class OnDemandInstanceServiceTest {
         map.put("test","test");
         when(jpaServiceInstanceRepository.findByServiceInstanceId(InstacneId)).thenReturn(jpaServiceInstance);
         when(onDemandDeploymentService.runningTask("deployment_name",jpaServiceInstance)).thenReturn(true);
-        Mockito.doCallRealMethod().when(cloudFoundryService).ServiceInstanceAppBinding("app_id","serviceInstance_id",map);
+        ServiceBindingsV2 serviceBindingsV2 = mock(ServiceBindingsV2.class, RETURNS_SMART_NULLS);
+        ApplicationsV2 applicationsV2 = mock(ApplicationsV2.class, RETURNS_SMART_NULLS);
+        Mockito.doCallRealMethod().when(cloudFoundryService).ServiceInstanceAppBinding("app_id","serviceInstance_id",map, serviceBindingsV2, applicationsV2);
 //        cloudFoundryService.ServiceInstanceAppBinding("app_id","serviceInstance_id",map);
         JpaServiceInstance result = onDemandInstanceService.getOperationServiceInstance(InstacneId);
         assertThat(result, is(jpaServiceInstance));
@@ -367,7 +371,9 @@ public class OnDemandInstanceServiceTest {
         map.put("test","test");
         when(jpaServiceInstanceRepository.findByServiceInstanceId(InstacneId)).thenReturn(jpaServiceInstance);
         when(onDemandDeploymentService.runningTask("deployment_name",jpaServiceInstance)).thenReturn(true);
-        doThrow(Exception.class).when(cloudFoundryService).ServiceInstanceAppBinding("app_id","serviceInstance_id",map);
+        ServiceBindingsV2 serviceBindingsV2 = mock(ServiceBindingsV2.class, RETURNS_SMART_NULLS);
+        ApplicationsV2 applicationsV2 = mock(ApplicationsV2.class, RETURNS_SMART_NULLS);
+        doThrow(Exception.class).when(cloudFoundryService).ServiceInstanceAppBinding("app_id","serviceInstance_id",map, serviceBindingsV2, applicationsV2);
         JpaServiceInstance result = onDemandInstanceService.getOperationServiceInstance(InstacneId);
         assertThat(result, is(jpaServiceInstance));
     }

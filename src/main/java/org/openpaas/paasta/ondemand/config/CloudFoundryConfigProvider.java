@@ -1,7 +1,6 @@
 package org.openpaas.paasta.ondemand.config;
 
 
-import org.cloudfoundry.reactor.DefaultConnectionContext;
 import org.cloudfoundry.reactor.tokenprovider.PasswordGrantTokenProvider;
 import org.openpaas.paasta.ondemand.common.Common;
 import org.openpaas.paasta.ondemand.common.PaastaConnectionContext;
@@ -24,5 +23,10 @@ public class CloudFoundryConfigProvider {
     @Bean
     PaastaTokenContext tokenProvider(@Value("${cloudfoundry.user.admin.username}") String username, @Value("${cloudfoundry.user.admin.password}") String password) {
         return new PaastaTokenContext(PasswordGrantTokenProvider.builder().password(password).username(username).build(), new Date());
+    }
+
+    @Bean
+    Common common(){
+        return new Common();
     }
 }

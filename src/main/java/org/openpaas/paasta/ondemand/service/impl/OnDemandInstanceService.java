@@ -2,7 +2,10 @@ package org.openpaas.paasta.ondemand.service.impl;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.cloudfoundry.client.v2.applications.ApplicationsV2;
+import org.cloudfoundry.client.v2.servicebindings.ServiceBindingsV2;
 import org.openpaas.paasta.bosh.director.BoshDirector;
+import org.openpaas.paasta.ondemand.common.Common;
 import org.openpaas.paasta.ondemand.exception.OndemandServiceException;
 import org.openpaas.paasta.ondemand.model.DeploymentInstance;
 import org.openpaas.paasta.ondemand.model.JpaServiceInstance;
@@ -57,6 +60,9 @@ public class OnDemandInstanceService implements ServiceInstanceService {
 
     @Autowired
     CloudFoundryService cloudFoundryService;
+
+    @Autowired
+    Common common;
 
     @Override
     public JpaServiceInstance createServiceInstance(CreateServiceInstanceRequest request) throws ServiceBrokerException {
@@ -204,7 +210,9 @@ public class OnDemandInstanceService implements ServiceInstanceService {
             CompletableFuture.runAsync(() -> {
                 try {
                     if (instance.getAppGuid() != null) {
-                        cloudFoundryService.ServiceInstanceAppBinding(instance.getAppGuid(), instance.getServiceInstanceId(), (Map) this.objectMapper.readValue(instance.getApp_parameter(), Map.class));
+                        ServiceBindingsV2 serviceBindingsV2 = common.cloudFoundryClient().serviceBindingsV2();
+                        ApplicationsV2 applicationsV2 = common.cloudFoundryClient().applicationsV2();
+                        cloudFoundryService.ServiceInstanceAppBinding(instance.getAppGuid(), instance.getServiceInstanceId(), (Map) this.objectMapper.readValue(instance.getApp_parameter(), Map.class), serviceBindingsV2, applicationsV2);
                     }
                 } catch (Exception e) {
                     logger.error(e.getMessage());
