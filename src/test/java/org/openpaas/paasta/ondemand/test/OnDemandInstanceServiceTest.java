@@ -98,6 +98,14 @@ public class OnDemandInstanceServiceTest {
         ReflectionTestUtils.setField(onDemandInstanceService, "instance_name", "instance_name");
         ReflectionTestUtils.setField(onDemandInstanceService, "org_limitation", -1);
         ReflectionTestUtils.setField(onDemandInstanceService, "space_limitation", -1);
+        SecurityGroups securityGroups = mock(SecurityGroups.class, RETURNS_SMART_NULLS);
+        CloudFoundryClient cloudFoundryClient = mock(CloudFoundryClient.class, RETURNS_SMART_NULLS);
+        DefaultConnectionContext connectionContext = DefaultConnectionContext.builder().apiHost("xx.xx.xx.xxx").build();
+        TokenProvider tokenProvider = mock(TokenProvider.class, RETURNS_SMART_NULLS);
+        ReactorCloudFoundryClient reactorCloudFoundryClient = ReactorCloudFoundryClient.builder().connectionContext(connectionContext).tokenProvider(tokenProvider).build();
+        when(common.connectionContext()).thenReturn(connectionContext);
+        when(common.cloudFoundryClient()).thenReturn(reactorCloudFoundryClient);
+
         print();
     }
 
@@ -152,18 +160,18 @@ public class OnDemandInstanceServiceTest {
                 .isInstanceOf(ServiceBrokerException.class).hasMessageContaining("deployment_name is Working");
     }
 
-    //findByVmInstanceId == null
-//    @Test
-//    public void createServiceInstanceTest_4() throws Exception {
-//        CreateServiceInstanceRequest request = ServiceInstanceRequestModel.getCreateServiceInstanceRequest();
-//        List<DeploymentInstance> getVmInstance = new ArrayList<>();
-//        getVmInstance.add(DeploymentInstanceModel.getDeploymentInstance());
-//        when(onDemandDeploymentService.getVmInstance("deployment_name", "instance_name")).thenReturn(getVmInstance);
-//        when(jpaServiceInstanceRepository.findByVmInstanceId(getVmInstance.get(0).getId())).thenReturn(null);
-//        JpaServiceInstance result = onDemandInstanceService.createServiceInstance(request);
-//        assertThat(result.getVmInstanceId(), is(getVmInstance.get(0).getId()));
-//        assertThat(result.getDashboardUrl(), is(getVmInstance.get(0).getIps().substring(1,getVmInstance.get(0).getIps().length()-1)));
-//    }
+//    findByVmInstanceId == null
+    @Test
+    public void createServiceInstanceTest_4() throws Exception {
+        CreateServiceInstanceRequest request = ServiceInstanceRequestModel.getCreateServiceInstanceRequest();
+        List<DeploymentInstance> getVmInstance = new ArrayList<>();
+        getVmInstance.add(DeploymentInstanceModel.getDeploymentInstance());
+        when(onDemandDeploymentService.getVmInstance("deployment_name", "instance_name")).thenReturn(getVmInstance);
+        when(jpaServiceInstanceRepository.findByVmInstanceId(getVmInstance.get(0).getId())).thenReturn(null);
+        JpaServiceInstance result = onDemandInstanceService.createServiceInstance(request);
+        assertThat(result.getVmInstanceId(), is(getVmInstance.get(0).getId()));
+        assertThat(result.getDashboardUrl(), is(getVmInstance.get(0).getIps().substring(1,getVmInstance.get(0).getIps().length()-1)));
+    }
 
     //getLock == true
     @Test
@@ -188,22 +196,22 @@ public class OnDemandInstanceServiceTest {
                 .isInstanceOf(ServiceBrokerException.class).hasMessageContaining("deployment_name is Working");
     }
 
-    //Detach VM Start Test
-//    @Test
-//    public void createServiceInstanceTest_6() throws Exception {
-//        CreateServiceInstanceRequest request = ServiceInstanceRequestModel.getCreateServiceInstanceRequest();
-//        List<DeploymentInstance> getVmInstance = new ArrayList<>();
-//        getVmInstance.add(DeploymentInstanceModel.getDeploymentDetachedInstance());
-//        String taskId = anyString();
-//        String ips = anyString();
-//        when(onDemandDeploymentService.getVmInstance("deployment_name", "instance_name")).thenReturn(getVmInstance);
-//        when(onDemandDeploymentService.getLock("deployment_name")).thenReturn(false);
-//        when(onDemandDeploymentService.getTaskID("deployment_name")).thenReturn(taskId);
-//        when(onDemandDeploymentService.getStartInstanceIPS(taskId,"instance_name",getVmInstance.get(0).getId())).thenReturn(ips);
-//        JpaServiceInstance result = onDemandInstanceService.createServiceInstance(request);
-//        assertThat(result.getVmInstanceId(), is(getVmInstance.get(0).getId()));
-//        assertThat(result.getDashboardUrl(), is(ips));
-//    }
+//    Detach VM Start Test
+    @Test
+    public void createServiceInstanceTest_6() throws Exception {
+        CreateServiceInstanceRequest request = ServiceInstanceRequestModel.getCreateServiceInstanceRequest();
+        List<DeploymentInstance> getVmInstance = new ArrayList<>();
+        getVmInstance.add(DeploymentInstanceModel.getDeploymentDetachedInstance());
+        String taskId = anyString();
+        String ips = anyString();
+        when(onDemandDeploymentService.getVmInstance("deployment_name", "instance_name")).thenReturn(getVmInstance);
+        when(onDemandDeploymentService.getLock("deployment_name")).thenReturn(false);
+        when(onDemandDeploymentService.getTaskID("deployment_name")).thenReturn(taskId);
+        when(onDemandDeploymentService.getStartInstanceIPS(taskId,"instance_name",getVmInstance.get(0).getId())).thenReturn(ips);
+        JpaServiceInstance result = onDemandInstanceService.createServiceInstance(request);
+        assertThat(result.getVmInstanceId(), is(getVmInstance.get(0).getId()));
+        assertThat(result.getDashboardUrl(), is(ips));
+    }
 
     //Detach VM Start Sleep Test
     @Test
@@ -244,13 +252,6 @@ public class OnDemandInstanceServiceTest {
         when(onDemandDeploymentService.getTaskID("deployment_name")).thenReturn(taskId);
         when(onDemandDeploymentService.getUpdateInstanceIPS(taskId)).thenReturn(ips);
         when(onDemandDeploymentService.getUpdateVMInstanceID(taskId,"instance_name")).thenReturn(instance_id);
-        SecurityGroups securityGroups = mock(SecurityGroups.class, RETURNS_SMART_NULLS);
-        CloudFoundryClient cloudFoundryClient = mock(CloudFoundryClient.class, RETURNS_SMART_NULLS);
-        DefaultConnectionContext connectionContext = DefaultConnectionContext.builder().apiHost("xx.xx.xx.xxx").build();
-        TokenProvider tokenProvider = mock(TokenProvider.class, RETURNS_SMART_NULLS);
-        ReactorCloudFoundryClient reactorCloudFoundryClient = ReactorCloudFoundryClient.builder().connectionContext(connectionContext).tokenProvider(tokenProvider).build();
-        when(common.connectionContext()).thenReturn(connectionContext);
-        when(common.cloudFoundryClient()).thenReturn(reactorCloudFoundryClient);
 
         JpaServiceInstance result = onDemandInstanceService.createServiceInstance(request);
         assertThat(result.getVmInstanceId(), is(instance_id));
