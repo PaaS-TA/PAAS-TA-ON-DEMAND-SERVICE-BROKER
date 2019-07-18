@@ -136,6 +136,48 @@ public class CloudFoundryServiceTest {
                 .spaceId("space_id").name("instance_name_space_id").build())).thenReturn(Mono.just(CreateSecurityGroupResponse.builder().build()));
         cloudFoundryService.SecurityGurop("space_id","11.11.11.111", securityGroups);
     }
+
+    @Test
+    public void SecurityGurop_test3() throws Exception {
+        SecurityGroups securityGroups = mock(SecurityGroups.class, RETURNS_SMART_NULLS);
+        List<SecurityGroupResource> securityGroupResources = new ArrayList<>();
+        securityGroupResources.add(
+                SecurityGroupResource.builder().entity(
+                        SecurityGroupEntity.builder().name("Entity_test").build()
+                ).metadata(
+                        Metadata.builder().id("id_test").build()
+                ).build()
+        );
+        when(securityGroups.get(GetSecurityGroupRequest.builder().securityGroupId("id_test").build())).thenReturn(Mono.just(GetSecurityGroupResponse.builder().entity(securityGroupResources.get(0).getEntity()).build()));
+        when(securityGroups.update(UpdateSecurityGroupRequest.builder().name("Entity_test").securityGroupId("id_test").rule(RuleEntity.builder()
+                .protocol(Protocol.ALL)
+                .destination("11.11.11.111")
+                .build())
+                .spaceId("space_id").name("instance_name_space_id").build())).thenReturn(Mono.just(UpdateSecurityGroupResponse.builder().build()));
+        cloudFoundryService.UpdateSecurityGroup(securityGroups,"11.11.11.111",securityGroupResources);
+    }
+
+    @Test
+    public void SecurityGurop_test4() throws Exception {
+        SecurityGroups securityGroups = mock(SecurityGroups.class, RETURNS_SMART_NULLS);
+        List<SecurityGroupResource> securityGroupResources = new ArrayList<>();
+        securityGroupResources.add(
+                SecurityGroupResource.builder().entity(
+                        SecurityGroupEntity.builder().name("Entity_test").build()
+                ).metadata(
+                        Metadata.builder().id("id_test").build()
+                ).build()
+        );
+        doThrow(Exception.class).when(securityGroups).get(GetSecurityGroupRequest.builder().securityGroupId("id_test").build());
+        when(securityGroups.update(UpdateSecurityGroupRequest.builder().name("Entity_test").securityGroupId("id_test").rule(RuleEntity.builder()
+                .protocol(Protocol.ALL)
+                .destination("11.11.11.111")
+                .build())
+                .spaceId("space_id").name("instance_name_space_id").build())).thenReturn(Mono.just(UpdateSecurityGroupResponse.builder().build()));
+        cloudFoundryService.UpdateSecurityGroup(securityGroups,"11.11.11.111",securityGroupResources);
+    }
+
+
 }
 
 

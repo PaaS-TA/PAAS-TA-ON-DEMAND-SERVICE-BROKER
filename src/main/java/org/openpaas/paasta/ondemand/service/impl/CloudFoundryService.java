@@ -64,7 +64,7 @@ public class CloudFoundryService {
                 .build()).block();
     }
 
-    private void UpdateSecurityGroup(SecurityGroups securityGroups, String url, List<SecurityGroupResource> resources){
+    public void UpdateSecurityGroup(SecurityGroups securityGroups, String url, List<SecurityGroupResource> resources){
         try {
             List<RuleEntity> ruleEntities = securityGroups.get(GetSecurityGroupRequest.builder().securityGroupId(resources.get(0).getMetadata().getId()).build()).block().getEntity().getRules();
             List<RuleEntity> rules = new ArrayList<>();
