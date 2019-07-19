@@ -5,7 +5,6 @@ import org.cloudfoundry.client.v2.applications.RestageApplicationRequest;
 import org.cloudfoundry.client.v2.securitygroups.*;
 import org.cloudfoundry.client.v2.servicebindings.CreateServiceBindingRequest;
 import org.cloudfoundry.client.v2.servicebindings.ServiceBindingsV2;
-import org.cloudfoundry.reactor.client.ReactorCloudFoundryClient;
 import org.openpaas.paasta.ondemand.common.Common;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,43 +78,42 @@ public class CloudFoundryService {
         }
     }
 
-    public void DelSecurityGurop(String space_id, String url){
-        ReactorCloudFoundryClient reactorCloudFoundryClient = common.cloudFoundryClient();
+    public void DelSecurityGurop(SecurityGroups securityGroups, String space_id, String url){
         /*
         시큐리티 그룹 조회
          */
-        ListSecurityGroupsResponse  listSecurityGroupsResponse = reactorCloudFoundryClient.securityGroups().list(ListSecurityGroupsRequest.builder().build()).block();
+        ListSecurityGroupsResponse  listSecurityGroupsResponse = securityGroups.list(ListSecurityGroupsRequest.builder().build()).block();
         List<SecurityGroupResource> resources = listSecurityGroupsResponse.getResources().stream().filter(result -> result.getEntity().getName().equals(instance_name + "_" + space_id)).collect(Collectors.toList());
         if(resources.isEmpty()){
             for(int i = 2 ; i <= listSecurityGroupsResponse.getTotalPages(); i++)
             {
-                resources = reactorCloudFoundryClient.securityGroups().list(ListSecurityGroupsRequest.builder().page(i).build()).block().getResources().stream().filter(result -> result.getEntity().getName().equals(instance_name + "_" + space_id)).collect(Collectors.toList());
+                resources = securityGroups.list(ListSecurityGroupsRequest.builder().page(i).build()).block().getResources().stream().filter(result -> result.getEntity().getName().equals(instance_name + "_" + space_id)).collect(Collectors.toList());
                 if(!resources.isEmpty()){
-                    DelUpdateSecurityGroup(reactorCloudFoundryClient, url, resources);
+                    DelUpdateSecurityGroup(securityGroups, url, resources);
                     return;
                 }
             }
         } else {
-            DelUpdateSecurityGroup(reactorCloudFoundryClient, url, resources);
+            DelUpdateSecurityGroup(securityGroups, url, resources);
             return;
         }
     }
 
-    private void DelUpdateSecurityGroup(ReactorCloudFoundryClient reactorCloudFoundryClient, String url, List<SecurityGroupResource> resources){
+    private void DelUpdateSecurityGroup(SecurityGroups securityGroups, String url, List<SecurityGroupResource> resources){
         try {
-            List<RuleEntity> ruleEntities = reactorCloudFoundryClient.securityGroups().get(GetSecurityGroupRequest.builder().securityGroupId(resources.get(0).getMetadata().getId()).build()).block().getEntity().getRules();
+            List<RuleEntity> ruleEntities = securityGroups.get(GetSecurityGroupRequest.builder().securityGroupId(resources.get(0).getMetadata().getId()).build()).block().getEntity().getRules();
             List<RuleEntity> rules = new ArrayList<>();
             rules.addAll(ruleEntities);
             if(rules.size() <= 1){
-                reactorCloudFoundryClient.securityGroups().delete(DeleteSecurityGroupRequest.builder().securityGroupId(resources.get(0).getMetadata().getId()).async(true).build());
+                securityGroups.delete(DeleteSecurityGroupRequest.builder().securityGroupId(resources.get(0).getMetadata().getId()).async(true).build());
             }else{
                 for(RuleEntity rule : rules) {
                     if (rule.getDestination().equals(url)) {
                         rules.remove(rule);
-                        return;
+                        break;
                     }
                 }
-                reactorCloudFoundryClient.securityGroups().update(UpdateSecurityGroupRequest.builder().name(resources.get(0).getEntity().getName()).securityGroupId(resources.get(0).getMetadata().getId()).rules(rules).build()).block();
+                securityGroups.update(UpdateSecurityGroupRequest.builder().name(resources.get(0).getEntity().getName()).securityGroupId(resources.get(0).getMetadata().getId()).rules(rules).build()).block();
             }
         } catch (Exception e){
             logger.info(e.getMessage());

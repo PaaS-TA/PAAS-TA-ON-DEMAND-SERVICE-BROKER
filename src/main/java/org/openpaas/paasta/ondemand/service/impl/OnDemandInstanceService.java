@@ -187,7 +187,7 @@ public class OnDemandInstanceService implements ServiceInstanceService {
                         continue;
                     }
                     onDemandDeploymentService.updateInstanceState(deployment_name, instance_name, instance.getVmInstanceId(), BoshDirector.INSTANCE_STATE_DETACHED);
-                    cloudFoundryService.DelSecurityGurop(instance.getSpaceGuid(), instance.getDashboardUrl());
+                    cloudFoundryService.DelSecurityGurop(common.cloudFoundryClient().securityGroups(), instance.getSpaceGuid(), instance.getDashboardUrl());
                     logger.info("VM DETACHED SUCCEED : VM_ID : " + instance.getVmInstanceId());
                     break;
                 }
