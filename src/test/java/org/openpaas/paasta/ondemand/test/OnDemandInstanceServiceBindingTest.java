@@ -70,10 +70,10 @@ public class OnDemandInstanceServiceBindingTest {
         assertThat(serviceInstanceBinding.getCredentials().get("test"), is("test"));
     }
 
-//    @Test
-//    public void createServiceInstanceUnBinding_test1() throws Exception {
-//        DeleteServiceInstanceBindingRequest request = ServiceInstanceRequestModel.getDeleteServiceInstanceBindingRequest();;
-//        ServiceInstanceBinding serviceInstanceBinding = onDemandInstanceServiceBinding.deleteServiceInstanceBinding(request);
-//        assertThat(serviceInstanceBinding.getServiceInstanceId(), is("ServiceInstance_id"));
-//    }
+    @Test
+    public void createServiceInstanceUnBinding_test1() throws Exception {
+        DeleteServiceInstanceBindingRequest request = ServiceInstanceRequestModel.getDeleteServiceInstanceBindingRequest();;
+        ServiceInstanceBinding serviceInstanceBinding = onDemandInstanceServiceBinding.deleteServiceInstanceBinding(request);
+        assertThat(serviceInstanceBinding.getServiceInstanceId(), is("ServiceInstance_id"));
+    }
 }

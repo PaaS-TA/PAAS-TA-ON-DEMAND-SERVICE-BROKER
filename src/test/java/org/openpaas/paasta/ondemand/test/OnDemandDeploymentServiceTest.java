@@ -70,16 +70,16 @@ public class OnDemandDeploymentServiceTest {
         onDemandDeploymentService.setBoshDirector(boshDirector);
     }
 
-//    @Test
-//    public void getVmInstance_test1() throws Exception {
-//        String task = "";
-//        List<Map> result = new ArrayList<>();
-//        when(boshDirector.getListDetailOfInstances("deployment_name")).thenReturn(task);
-//        when(boshDirector.getResultRetrieveTasksLog(task)).thenReturn(result);
-//        List<DeploymentInstance> deploymentInstances = onDemandDeploymentService.getVmInstance("deployment_name","instance_name");
-//        assertThat(deploymentInstances, is(result));
-//    }
-//
+    @Test
+    public void getVmInstance_test1() throws Exception {
+        String task = "";
+        List<Map> result = new ArrayList<>();
+        when(boshDirector.getListDetailOfInstances("deployment_name")).thenReturn(task);
+        when(boshDirector.getResultRetrieveTasksLog(task)).thenReturn(result);
+        List<DeploymentInstance> deploymentInstances = onDemandDeploymentService.getVmInstance("deployment_name","instance_name");
+        assertThat(deploymentInstances, is(result));
+    }
+
 //    @Test
 //    public void getVmInstance_test2() throws Exception {
 //        String task = "";
