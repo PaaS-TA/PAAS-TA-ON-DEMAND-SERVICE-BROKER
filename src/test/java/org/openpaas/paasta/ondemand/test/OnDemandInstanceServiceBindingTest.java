@@ -43,33 +43,33 @@ public class OnDemandInstanceServiceBindingTest {
         ReflectionTestUtils.setField(onDemandInstanceServiceBinding, "port", 1234);
     }
 
-//    @Test
-//    public void createServiceInstanceBinding_test1() throws Exception {
-//        CreateServiceInstanceBindingRequest request = ServiceInstanceRequestModel.getCreateServiceInstanceBindingRequest();
-//        JpaServiceInstance jpaServiceInstance = new JpaServiceInstance();
-//        request.setParameters(null);
-//        when(jpaServiceInstanceRepository.findByServiceInstanceId(anyString())).thenReturn(jpaServiceInstance);
-//        ServiceInstanceBinding serviceInstanceBinding = onDemandInstanceServiceBinding.createServiceInstanceBinding(request);
-//        assertThat(serviceInstanceBinding.getAppGuid(), is("app_guid"));
-//        assertThat(serviceInstanceBinding.getCredentials().get("password"), is("password"));
-//        assertThat(serviceInstanceBinding.getCredentials().get("port"), is(1234));
-//    }
-//
-//    @Test
-//    public void createServiceInstanceBinding_test2() throws Exception {
-//        CreateServiceInstanceBindingRequest request = ServiceInstanceRequestModel.getCreateServiceInstanceBindingRequest();
-//        JpaServiceInstance jpaServiceInstance = new JpaServiceInstance();
-//        Map<String, Object> credentials = new HashMap<String, Object>();
-//        credentials.put("test", "test");
-//        request.setParameters(credentials);
-//        when(jpaServiceInstanceRepository.findByServiceInstanceId(anyString())).thenReturn(jpaServiceInstance);
-//        ServiceInstanceBinding serviceInstanceBinding = onDemandInstanceServiceBinding.createServiceInstanceBinding(request);
-//        assertThat(serviceInstanceBinding.getAppGuid(), is("app_guid"));
-//        assertThat(serviceInstanceBinding.getCredentials().get("password"), is("password"));
-//        assertThat(serviceInstanceBinding.getCredentials().get("port"), is(1234));
-//        assertThat(serviceInstanceBinding.getCredentials().get("test"), is("test"));
-//    }
-//
+    @Test
+    public void createServiceInstanceBinding_test1() throws Exception {
+        CreateServiceInstanceBindingRequest request = ServiceInstanceRequestModel.getCreateServiceInstanceBindingRequest();
+        JpaServiceInstance jpaServiceInstance = new JpaServiceInstance();
+        request.setParameters(null);
+        when(jpaServiceInstanceRepository.findByServiceInstanceId(anyString())).thenReturn(jpaServiceInstance);
+        ServiceInstanceBinding serviceInstanceBinding = onDemandInstanceServiceBinding.createServiceInstanceBinding(request);
+        assertThat(serviceInstanceBinding.getAppGuid(), is("app_guid"));
+        assertThat(serviceInstanceBinding.getCredentials().get("password"), is("password"));
+        assertThat(serviceInstanceBinding.getCredentials().get("port"), is(1234));
+    }
+
+    @Test
+    public void createServiceInstanceBinding_test2() throws Exception {
+        CreateServiceInstanceBindingRequest request = ServiceInstanceRequestModel.getCreateServiceInstanceBindingRequest();
+        JpaServiceInstance jpaServiceInstance = new JpaServiceInstance();
+        Map<String, Object> credentials = new HashMap<String, Object>();
+        credentials.put("test", "test");
+        request.setParameters(credentials);
+        when(jpaServiceInstanceRepository.findByServiceInstanceId(anyString())).thenReturn(jpaServiceInstance);
+        ServiceInstanceBinding serviceInstanceBinding = onDemandInstanceServiceBinding.createServiceInstanceBinding(request);
+        assertThat(serviceInstanceBinding.getAppGuid(), is("app_guid"));
+        assertThat(serviceInstanceBinding.getCredentials().get("password"), is("password"));
+        assertThat(serviceInstanceBinding.getCredentials().get("port"), is(1234));
+        assertThat(serviceInstanceBinding.getCredentials().get("test"), is("test"));
+    }
+
 //    @Test
 //    public void createServiceInstanceUnBinding_test1() throws Exception {
 //        DeleteServiceInstanceBindingRequest request = ServiceInstanceRequestModel.getDeleteServiceInstanceBindingRequest();;
