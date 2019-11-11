@@ -113,36 +113,36 @@ public class OnDemandDeploymentServiceTest {
         List<DeploymentInstance> deploymentInstances = onDemandDeploymentService.getVmInstance("deployment_name","instance_name");
         assertThat(deploymentInstances, is(nullValue()));
     }
-//
-//    //getLock_Exception TEST
-//    @Test
-//    public void getLock_test1() throws Exception {
-//        String locks = "";
-//        when(boshDirector.getListLocks()).thenReturn(locks);
-//        boolean result = onDemandDeploymentService.getLock("deployment_name");
-//        assertThat(result, is(false));
-//    }
-//
-//    //getLock TEST false
-//    @Test
-//    public void getLock_test2() throws Exception {
-//        String locks = "[{\"type\":\"deployment\",\"resource\":[\"on-demand-service-broker\"],\"timeout\":\"1563324005.776951\",\"task_id\":\"939115\"},{\"type\":\"compile\",\"resource\":[\"1492\",\"ubuntu-trusty/3586.25\"],\"timeout\":\"1563324016.524488\",\"task_id\":\"939115\"},{\"type\":\"compile\",\"resource\":[\"1491\",\"ubuntu-trusty/3586.25\"],\"timeout\":\"1563324016.521792\",\"task_id\":\"939115\"},{\"type\":\"compile\",\"resource\":[\"1489\",\"ubuntu-trusty/3586.25\"],\"timeout\":\"1563324016.527235\",\"task_id\":\"939115\"},{\"type\":\"compile\",\"resource\":[\"1490\",\"ubuntu-trusty/3586.25\"],\"timeout\":\"1563324016.539023\",\"task_id\":\"939115\"}]";
-//        when(boshDirector.getListLocks()).thenReturn(locks);
-//        boolean result = onDemandDeploymentService.getLock("deployment_name");
-//        assertThat(result, is(false));
-//    }
-//
-//    //getLock TEST True
-//    @Test
-//    public void getLock_test3() throws Exception {
-//        String locks = "[{\"type\":\"deployment\",\"resource\":[\"deployment_name\"],\"timeout\":\"1563324005.776951\",\"task_id\":\"939115\"},{\"type\":\"compile\",\"resource\":[\"1492\",\"ubuntu-trusty/3586.25\"],\"timeout\":\"1563324016.524488\",\"task_id\":\"939115\"},{\"type\":\"compile\",\"resource\":[\"1491\",\"ubuntu-trusty/3586.25\"],\"timeout\":\"1563324016.521792\",\"task_id\":\"939115\"},{\"type\":\"compile\",\"resource\":[\"1489\",\"ubuntu-trusty/3586.25\"],\"timeout\":\"1563324016.527235\",\"task_id\":\"939115\"},{\"type\":\"compile\",\"resource\":[\"1490\",\"ubuntu-trusty/3586.25\"],\"timeout\":\"1563324016.539023\",\"task_id\":\"939115\"}]";
-//        when(boshDirector.getListLocks()).thenReturn(locks);
-//        boolean result = onDemandDeploymentService.getLock("deployment_name");
-//        assertThat(result, is(true));
-//    }
-//
-//
-//
+
+    //getLock_Exception TEST
+    @Test
+    public void getLock_test1() throws Exception {
+        String locks = "";
+        when(boshDirector.getListLocks()).thenReturn(locks);
+        boolean result = onDemandDeploymentService.getLock("deployment_name");
+        assertThat(result, is(false));
+    }
+
+    //getLock TEST false
+    @Test
+    public void getLock_test2() throws Exception {
+        String locks = "[{\"type\":\"deployment\",\"resource\":[\"on-demand-service-broker\"],\"timeout\":\"1563324005.776951\",\"task_id\":\"939115\"},{\"type\":\"compile\",\"resource\":[\"1492\",\"ubuntu-trusty/3586.25\"],\"timeout\":\"1563324016.524488\",\"task_id\":\"939115\"},{\"type\":\"compile\",\"resource\":[\"1491\",\"ubuntu-trusty/3586.25\"],\"timeout\":\"1563324016.521792\",\"task_id\":\"939115\"},{\"type\":\"compile\",\"resource\":[\"1489\",\"ubuntu-trusty/3586.25\"],\"timeout\":\"1563324016.527235\",\"task_id\":\"939115\"},{\"type\":\"compile\",\"resource\":[\"1490\",\"ubuntu-trusty/3586.25\"],\"timeout\":\"1563324016.539023\",\"task_id\":\"939115\"}]";
+        when(boshDirector.getListLocks()).thenReturn(locks);
+        boolean result = onDemandDeploymentService.getLock("deployment_name");
+        assertThat(result, is(false));
+    }
+
+    //getLock TEST True
+    @Test
+    public void getLock_test3() throws Exception {
+        String locks = "[{\"type\":\"deployment\",\"resource\":[\"deployment_name\"],\"timeout\":\"1563324005.776951\",\"task_id\":\"939115\"},{\"type\":\"compile\",\"resource\":[\"1492\",\"ubuntu-trusty/3586.25\"],\"timeout\":\"1563324016.524488\",\"task_id\":\"939115\"},{\"type\":\"compile\",\"resource\":[\"1491\",\"ubuntu-trusty/3586.25\"],\"timeout\":\"1563324016.521792\",\"task_id\":\"939115\"},{\"type\":\"compile\",\"resource\":[\"1489\",\"ubuntu-trusty/3586.25\"],\"timeout\":\"1563324016.527235\",\"task_id\":\"939115\"},{\"type\":\"compile\",\"resource\":[\"1490\",\"ubuntu-trusty/3586.25\"],\"timeout\":\"1563324016.539023\",\"task_id\":\"939115\"}]";
+        when(boshDirector.getListLocks()).thenReturn(locks);
+        boolean result = onDemandDeploymentService.getLock("deployment_name");
+        assertThat(result, is(true));
+    }
+
+
+
 //    //updateInstanceState TEST
 //    @Test
 //    public void updateInstanceState_test1() throws Exception {
