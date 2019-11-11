@@ -175,78 +175,78 @@ public class OnDemandDeploymentServiceTest {
         assertThat(result, is(true));
     }
 
-//    //runningTask TEST
-//    @Test
-//    public void runningTask_test3() throws Exception {
-//        JpaServiceInstance jpaServiceInstance = new JpaServiceInstance();
-//        Map map = new HashMap();
-//        map.put("deployment", "deployment_name");
-//        map.put("id", "instance_name");
-//        List<Map> param = new ArrayList<>();
-//        param.add(map);
-//        jpaServiceInstance.setTaskId(null);
-//        when(boshDirector.getListRunningTasks()).thenReturn(param);
-//        when(jpaServiceInstanceRepository.save(jpaServiceInstance)).thenReturn(jpaServiceInstance);
-//        boolean result = onDemandDeploymentService.runningTask("deployment_name",jpaServiceInstance);
-//        assertThat(result, is(false));
-//    }
-//
-//    //runningTask TEST True
-//    @Test
-//    public void runningTask_test4() throws Exception {
-//        JpaServiceInstance jpaServiceInstance = new JpaServiceInstance();
-//        Map map = new HashMap();
-//        map.put("deployment", "deployment_name");
-//        map.put("id", "instance_name");
-//        List<Map> param = new ArrayList<>();
-//        param.add(map);
-//        jpaServiceInstance.setTaskId("instance_id");
-//        when(boshDirector.getListRunningTasks()).thenReturn(param);
-//        boolean result = onDemandDeploymentService.runningTask("deployment_name",jpaServiceInstance);
-//        assertThat(result, is(true));
-//    }
-//
-//    //getTaskID TEST Exception
-//    @Test
-//    public void getTaskID_test1() throws Exception {
-//        when(boshDirector.getListRunningTasks()).thenReturn(null);
-//        String result = onDemandDeploymentService.getTaskID("deployment_name");
-//        assertThat(result, is(nullValue()));
-//    }
-//
-//    //getTaskID TEST result null
-//    @Test
-//    public void getTaskID_test2() throws Exception {
-//        Map map = new HashMap();
-//        map.put("deployment", "not_deployment_name");
-//        map.put("id", "instance_name");
-//        List<Map> param = new ArrayList<>();
-//        param.add(map);
-//        when(boshDirector.getListRunningTasks()).thenReturn(param);
-//        String result = onDemandDeploymentService.getTaskID("deployment_name");
-//        assertThat(result, is(nullValue()));
-//    }
-//
-//    //getTaskID TEST result instance_id
-//    @Test
-//    public void getTaskID_test3() throws Exception {
-//        Map map = new HashMap();
-//        map.put("deployment", "deployment_name");
-//        map.put("id", "instance_id");
-//        List<Map> param = new ArrayList<>();
-//        param.add(map);
-//        when(boshDirector.getListRunningTasks()).thenReturn(param);
-//        String result = onDemandDeploymentService.getTaskID("deployment_name");
-//        assertThat(result, is("instance_id"));
-//    }
-//    //getTaskID TEST Exception
-//    @Test
-//    public void getStartInstanceIPS_test1() throws Exception {
-//        doThrow(Exception.class).when(boshDirector).getStartVMIPS("task_id","instance_name", "instance_id");
-//        String result = onDemandDeploymentService.getStartInstanceIPS("task_id","instance_name", "instance_id");
-//        assertThat(result, is(nullValue()));
-//    }
-//
+    //runningTask TEST
+    @Test
+    public void runningTask_test3() throws Exception {
+        JpaServiceInstance jpaServiceInstance = new JpaServiceInstance();
+        Map map = new HashMap();
+        map.put("deployment", "deployment_name");
+        map.put("id", "instance_name");
+        List<Map> param = new ArrayList<>();
+        param.add(map);
+        jpaServiceInstance.setTaskId(null);
+        when(boshDirector.getListRunningTasks()).thenReturn(param);
+        when(jpaServiceInstanceRepository.save(jpaServiceInstance)).thenReturn(jpaServiceInstance);
+        boolean result = onDemandDeploymentService.runningTask("deployment_name",jpaServiceInstance);
+        assertThat(result, is(false));
+    }
+
+    //runningTask TEST True
+    @Test
+    public void runningTask_test4() throws Exception {
+        JpaServiceInstance jpaServiceInstance = new JpaServiceInstance();
+        Map map = new HashMap();
+        map.put("deployment", "deployment_name");
+        map.put("id", "instance_name");
+        List<Map> param = new ArrayList<>();
+        param.add(map);
+        jpaServiceInstance.setTaskId("instance_id");
+        when(boshDirector.getListRunningTasks()).thenReturn(param);
+        boolean result = onDemandDeploymentService.runningTask("deployment_name",jpaServiceInstance);
+        assertThat(result, is(true));
+    }
+
+    //getTaskID TEST Exception
+    @Test
+    public void getTaskID_test1() throws Exception {
+        when(boshDirector.getListRunningTasks()).thenReturn(null);
+        String result = onDemandDeploymentService.getTaskID("deployment_name");
+        assertThat(result, is(nullValue()));
+    }
+
+    //getTaskID TEST result null
+    @Test
+    public void getTaskID_test2() throws Exception {
+        Map map = new HashMap();
+        map.put("deployment", "not_deployment_name");
+        map.put("id", "instance_name");
+        List<Map> param = new ArrayList<>();
+        param.add(map);
+        when(boshDirector.getListRunningTasks()).thenReturn(param);
+        String result = onDemandDeploymentService.getTaskID("deployment_name");
+        assertThat(result, is(nullValue()));
+    }
+
+    //getTaskID TEST result instance_id
+    @Test
+    public void getTaskID_test3() throws Exception {
+        Map map = new HashMap();
+        map.put("deployment", "deployment_name");
+        map.put("id", "instance_id");
+        List<Map> param = new ArrayList<>();
+        param.add(map);
+        when(boshDirector.getListRunningTasks()).thenReturn(param);
+        String result = onDemandDeploymentService.getTaskID("deployment_name");
+        assertThat(result, is("instance_id"));
+    }
+    //getTaskID TEST Exception
+    @Test
+    public void getStartInstanceIPS_test1() throws Exception {
+        doThrow(Exception.class).when(boshDirector).getStartVMIPS("task_id","instance_name", "instance_id");
+        String result = onDemandDeploymentService.getStartInstanceIPS("task_id","instance_name", "instance_id");
+        assertThat(result, is(nullValue()));
+    }
+
 //    //getTaskID TEST
 //    @Test
 //    public void getStartInstanceIPS_test2() throws Exception {
