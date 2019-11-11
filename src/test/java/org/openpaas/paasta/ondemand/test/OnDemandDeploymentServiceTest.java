@@ -247,44 +247,44 @@ public class OnDemandDeploymentServiceTest {
         assertThat(result, is(nullValue()));
     }
 
-//    //getTaskID TEST
-//    @Test
-//    public void getStartInstanceIPS_test2() throws Exception {
-//        when(boshDirector.getStartVMIPS("task_id","instance_name", "instance_id")).thenReturn("result");
-//        String result = onDemandDeploymentService.getStartInstanceIPS("task_id","instance_name", "instance_id");
-//        assertThat(result, is("result"));
-//    }
-//
-//    //createInstance TEST Exception
-//    @Test
-//    public void createInstance_test1() throws Exception {
-//        doThrow(Exception.class).when(boshDirector).deploy("deployment_name","instance_name");
-//        onDemandDeploymentService.createInstance("deployment_name","instance_name");
-//
-//    }
-//
-//    //createInstance TEST
-//    @Test
-//    public void createInstance_test2() throws Exception {
-//        when(boshDirector.deploy("deployment_name","instance_name")).thenReturn(true);
-//        onDemandDeploymentService.createInstance("deployment_name","instance_name");
-//    }
-//
-//    //getUpdateInstanceIPS TEST Exception
-//    @Test
-//    public void getUpdateInstanceIPS_test1() throws Exception {
-//        doThrow(Exception.class).when(boshDirector).getUpdateVMIPS("task_id");
-//        String result = onDemandDeploymentService.getUpdateInstanceIPS("task_id");
-//        assertThat(result, is(nullValue()));
-//    }
-//
-//    //getUpdateInstanceIPS TEST
-//    @Test
-//    public void getUpdateInstanceIPS_test2() throws Exception {
-//        when(boshDirector.getUpdateVMIPS("task_id")).thenReturn("result");
-//        String result = onDemandDeploymentService.getUpdateInstanceIPS("task_id");
-//        assertThat(result, is("result"));
-//    }
+    //getTaskID TEST
+    @Test
+    public void getStartInstanceIPS_test2() throws Exception {
+        when(boshDirector.getStartVMIPS("task_id","instance_name", "instance_id")).thenReturn("result");
+        String result = onDemandDeploymentService.getStartInstanceIPS("task_id","instance_name", "instance_id");
+        assertThat(result, is("result"));
+    }
+
+    //createInstance TEST Exception
+    @Test
+    public void createInstance_test1() throws Exception {
+        doThrow(Exception.class).when(boshDirector).deploy("deployment_name","instance_name");
+        onDemandDeploymentService.createInstance("deployment_name","instance_name");
+
+    }
+
+    //createInstance TEST
+    @Test
+    public void createInstance_test2() throws Exception {
+        when(boshDirector.deploy("deployment_name","instance_name")).thenReturn(true);
+        onDemandDeploymentService.createInstance("deployment_name","instance_name");
+    }
+
+    //getUpdateInstanceIPS TEST Exception
+    @Test
+    public void getUpdateInstanceIPS_test1() throws Exception {
+        doThrow(Exception.class).when(boshDirector).getUpdateVMIPS("task_id");
+        String result = onDemandDeploymentService.getUpdateInstanceIPS("task_id");
+        assertThat(result, is(nullValue()));
+    }
+
+    //getUpdateInstanceIPS TEST
+    @Test
+    public void getUpdateInstanceIPS_test2() throws Exception {
+        when(boshDirector.getUpdateVMIPS("task_id")).thenReturn("result");
+        String result = onDemandDeploymentService.getUpdateInstanceIPS("task_id");
+        assertThat(result, is("result"));
+    }
 //
 //    //getUpdateInstanceIPS TEST Exception
 //    @Test
