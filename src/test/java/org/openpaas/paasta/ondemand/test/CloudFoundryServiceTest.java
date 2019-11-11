@@ -160,153 +160,153 @@ public class CloudFoundryServiceTest {
         cloudFoundryService.UpdateSecurityGroup(securityGroups,"11.11.11.111",securityGroupResources);
     }
 
-//    @Test
-//    public void SecurityGurop_test4() throws Exception {
-//        SecurityGroups securityGroups = mock(SecurityGroups.class, RETURNS_SMART_NULLS);
-//        List<SecurityGroupResource> securityGroupResources = new ArrayList<>();
-//        securityGroupResources.add(
-//                SecurityGroupResource.builder().entity(
-//                        SecurityGroupEntity.builder().name("Entity_test").build()
-//                ).metadata(
-//                        Metadata.builder().id("id_test").build()
-//                ).build()
-//        );
-//        doThrow(Exception.class).when(securityGroups).get(GetSecurityGroupRequest.builder().securityGroupId("id_test").build());
-//        when(securityGroups.update(UpdateSecurityGroupRequest.builder().name("Entity_test").securityGroupId("id_test").rule(RuleEntity.builder()
-//                .protocol(Protocol.ALL)
-//                .destination("11.11.11.111")
-//                .build())
-//                .spaceId("space_id").name("instance_name_space_id").build())).thenReturn(Mono.just(UpdateSecurityGroupResponse.builder().build()));
-//        cloudFoundryService.UpdateSecurityGroup(securityGroups,"11.11.11.111",securityGroupResources);
-//    }
-//
-//    @Test
-//    public void SecurityGurop_test5() throws Exception {
-//        SecurityGroups securityGroups = mock(SecurityGroups.class, RETURNS_SMART_NULLS);
-//        List<SecurityGroupResource> securityGroupResources = new ArrayList<>();
-//        securityGroupResources.add(
-//                SecurityGroupResource.builder().entity(
-//                        SecurityGroupEntity.builder().name("instance_name_space_id").rule(RuleEntity.builder()
-//                                .protocol(Protocol.ALL)
-//                                .destination("11.11.11.111")
-//                                .build()).build()
-//                ).metadata(
-//                        Metadata.builder().id("id_test").build()
-//                ).build()
-//        );
-//        securityGroupResources.add(
-//                SecurityGroupResource.builder().entity(
-//                        SecurityGroupEntity.builder().name("instance_name_space_id2").rule(RuleEntity.builder()
-//                                .protocol(Protocol.ALL)
-//                                .destination("11.11.11.111")
-//                                .build()).build()
-//                ).metadata(
-//                        Metadata.builder().id("id_test").build()
-//                ).build()
-//        );
-//        when(securityGroups.list(ListSecurityGroupsRequest.builder().build())).thenReturn(Mono.just(ListSecurityGroupsResponse.builder().totalPages(2).resources(securityGroupResources).build()));
-//        when(securityGroups.update(UpdateSecurityGroupRequest.builder().name("Entity_test").securityGroupId("id_test").rule(RuleEntity.builder()
-//                .protocol(Protocol.ALL)
-//                .destination("11.11.11.111")
-//                .build())
-//                .spaceId("space_id").name("instance_name_space_id").build())).thenReturn(Mono.just(UpdateSecurityGroupResponse.builder().build()));
-//        when(securityGroups.get(GetSecurityGroupRequest.builder().securityGroupId("id_test").build())).thenReturn(Mono.just(GetSecurityGroupResponse.builder().metadata(securityGroupResources.get(0).getMetadata()).entity(securityGroupResources.get(0).getEntity()).build()));
-//        doThrow(Exception.class).when(securityGroups).delete(DeleteSecurityGroupRequest.builder().securityGroupId("id_test").async(true).build());
-//        cloudFoundryService.DelSecurityGurop(securityGroups,"space_id","11.11.11.111");
-//    }
-//
-//    @Test
-//    public void SecurityGurop_test6() throws Exception {
-//        SecurityGroups securityGroups = mock(SecurityGroups.class, RETURNS_SMART_NULLS);
-//        List<SecurityGroupResource> securityGroupResources = new ArrayList<>();
-//        securityGroupResources.add(
-//                SecurityGroupResource.builder().entity(
-//                        SecurityGroupEntity.builder().name("instance_name_space_id").rule(RuleEntity.builder()
-//                                .protocol(Protocol.ALL)
-//                                .destination("11.11.11.111")
-//                                .build()).build()
-//                ).metadata(
-//                        Metadata.builder().id("id_test").build()
-//                ).build()
-//        );
-//        securityGroupResources.add(
-//                SecurityGroupResource.builder().entity(
-//                        SecurityGroupEntity.builder().name("instance_name_space_id2").rule(RuleEntity.builder()
-//                                .protocol(Protocol.ALL)
-//                                .destination("11.11.11.111")
-//                                .build()).build()
-//                ).metadata(
-//                        Metadata.builder().id("id_test").build()
-//                ).build()
-//        );
-//        when(securityGroups.list(ListSecurityGroupsRequest.builder().build())).thenReturn(Mono.just(ListSecurityGroupsResponse.builder().totalPages(2).resources(securityGroupResources).build()));
-//        when(securityGroups.update(UpdateSecurityGroupRequest.builder().name("Entity_test").securityGroupId("id_test").rule(RuleEntity.builder()
-//                .protocol(Protocol.ALL)
-//                .destination("11.11.11.111")
-//                .build())
-//                .spaceId("space_id").name("instance_name_space_id").build())).thenReturn(Mono.just(UpdateSecurityGroupResponse.builder().build()));
-//        List<RuleEntity> ruleEntities = new ArrayList<>();
-//        ruleEntities.add(RuleEntity.builder()
-//                .protocol(Protocol.ALL)
-//                .destination("11.11.11.111")
-//                .build());
-//        ruleEntities.add(RuleEntity.builder()
-//                .protocol(Protocol.ALL)
-//                .destination("11.11.11.112")
-//                .build());
-//        when(securityGroups.get(GetSecurityGroupRequest.builder().securityGroupId("id_test").build())).thenReturn(Mono.just(GetSecurityGroupResponse.builder().metadata(Metadata.builder().id("id_test").build()).entity(SecurityGroupEntity.builder().name("instance_name_space_id").rules(ruleEntities).build()).build()));
-//        when(securityGroups.update(UpdateSecurityGroupRequest.builder().name("instance_name_space_id").securityGroupId("id_test").rules(ruleEntities.get(1)).build())).thenReturn(Mono.just(UpdateSecurityGroupResponse.builder().metadata(Metadata.builder().id("id_test").build()).entity(SecurityGroupEntity.builder().name("instance_name_space_id").rule(RuleEntity.builder()
-//                .protocol(Protocol.ALL)
-//                .destination("11.11.11.112")
-//                .build()).build()).build()));
-//        cloudFoundryService.DelSecurityGurop(securityGroups,"space_id","11.11.11.111");
-//    }
-//
-//    @Test
-//    public void SecurityGurop_test7() throws Exception {
-//        SecurityGroups securityGroups = mock(SecurityGroups.class, RETURNS_SMART_NULLS);
-//        List<SecurityGroupResource> securityGroupResources = new ArrayList<>();
-//        securityGroupResources.add(
-//                SecurityGroupResource.builder().entity(
-//                        SecurityGroupEntity.builder().name("instance_name_space_id3").rule(RuleEntity.builder()
-//                                .protocol(Protocol.ALL)
-//                                .destination("11.11.11.111")
-//                                .build()).build()
-//                ).metadata(
-//                        Metadata.builder().id("id_test").build()
-//                ).build()
-//        );
-//        securityGroupResources.add(
-//                SecurityGroupResource.builder().entity(
-//                        SecurityGroupEntity.builder().name("instance_name_space_id2").rule(RuleEntity.builder()
-//                                .protocol(Protocol.ALL)
-//                                .destination("11.11.11.111")
-//                                .build()).build()
-//                ).metadata(
-//                        Metadata.builder().id("id_test").build()
-//                ).build()
-//        );
-//        when(securityGroups.list(ListSecurityGroupsRequest.builder().build())).thenReturn(Mono.just(ListSecurityGroupsResponse.builder().totalPages(3).resources(securityGroupResources).build()));
-//        when(securityGroups.list(ListSecurityGroupsRequest.builder().page(2).build())).thenReturn(Mono.just(ListSecurityGroupsResponse.builder().totalPages(2).resources(securityGroupResources).build()));
-//        when(securityGroups.list(ListSecurityGroupsRequest.builder().page(3).build())).thenReturn(Mono.just(ListSecurityGroupsResponse.builder().totalPages(2).resources(SecurityGroupResource.builder().entity(
-//                SecurityGroupEntity.builder().name("instance_name_space_id").rule(RuleEntity.builder()
-//                        .protocol(Protocol.ALL)
-//                        .destination("11.11.11.111")
-//                        .build()).build()
-//        ).metadata(
-//                Metadata.builder().id("id_test").build()
-//        ).build()).build()));
-//        when(securityGroups.update(UpdateSecurityGroupRequest.builder().name("Entity_test").securityGroupId("id_test").rule(RuleEntity.builder()
-//                .protocol(Protocol.ALL)
-//                .destination("11.11.11.111")
-//                .build())
-//                .spaceId("space_id").name("instance_name_space_id").build())).thenReturn(Mono.just(UpdateSecurityGroupResponse.builder().build()));
-//        //DelUpdateSecurityGroup
-//        when(securityGroups.get(GetSecurityGroupRequest.builder().securityGroupId("id_test").build())).thenReturn(Mono.just(GetSecurityGroupResponse.builder().metadata(securityGroupResources.get(0).getMetadata()).entity(securityGroupResources.get(0).getEntity()).build()));
-//        when(securityGroups.delete(DeleteSecurityGroupRequest.builder().securityGroupId("id_test").async(true).build())).thenReturn(Mono.just(DeleteSecurityGroupResponse.builder().build()));
-//
-//        cloudFoundryService.DelSecurityGurop(securityGroups,"space_id","11.11.11.111");
-//    }
+    @Test
+    public void SecurityGurop_test4() throws Exception {
+        SecurityGroups securityGroups = mock(SecurityGroups.class, RETURNS_SMART_NULLS);
+        List<SecurityGroupResource> securityGroupResources = new ArrayList<>();
+        securityGroupResources.add(
+                SecurityGroupResource.builder().entity(
+                        SecurityGroupEntity.builder().name("Entity_test").build()
+                ).metadata(
+                        Metadata.builder().id("id_test").build()
+                ).build()
+        );
+        doThrow(Exception.class).when(securityGroups).get(GetSecurityGroupRequest.builder().securityGroupId("id_test").build());
+        when(securityGroups.update(UpdateSecurityGroupRequest.builder().name("Entity_test").securityGroupId("id_test").rule(RuleEntity.builder()
+                .protocol(Protocol.ALL)
+                .destination("11.11.11.111")
+                .build())
+                .spaceId("space_id").name("instance_name_space_id").build())).thenReturn(Mono.just(UpdateSecurityGroupResponse.builder().build()));
+        cloudFoundryService.UpdateSecurityGroup(securityGroups,"11.11.11.111",securityGroupResources);
+    }
+
+    @Test
+    public void SecurityGurop_test5() throws Exception {
+        SecurityGroups securityGroups = mock(SecurityGroups.class, RETURNS_SMART_NULLS);
+        List<SecurityGroupResource> securityGroupResources = new ArrayList<>();
+        securityGroupResources.add(
+                SecurityGroupResource.builder().entity(
+                        SecurityGroupEntity.builder().name("instance_name_space_id").rule(RuleEntity.builder()
+                                .protocol(Protocol.ALL)
+                                .destination("11.11.11.111")
+                                .build()).build()
+                ).metadata(
+                        Metadata.builder().id("id_test").build()
+                ).build()
+        );
+        securityGroupResources.add(
+                SecurityGroupResource.builder().entity(
+                        SecurityGroupEntity.builder().name("instance_name_space_id2").rule(RuleEntity.builder()
+                                .protocol(Protocol.ALL)
+                                .destination("11.11.11.111")
+                                .build()).build()
+                ).metadata(
+                        Metadata.builder().id("id_test").build()
+                ).build()
+        );
+        when(securityGroups.list(ListSecurityGroupsRequest.builder().build())).thenReturn(Mono.just(ListSecurityGroupsResponse.builder().totalPages(2).resources(securityGroupResources).build()));
+        when(securityGroups.update(UpdateSecurityGroupRequest.builder().name("Entity_test").securityGroupId("id_test").rule(RuleEntity.builder()
+                .protocol(Protocol.ALL)
+                .destination("11.11.11.111")
+                .build())
+                .spaceId("space_id").name("instance_name_space_id").build())).thenReturn(Mono.just(UpdateSecurityGroupResponse.builder().build()));
+        when(securityGroups.get(GetSecurityGroupRequest.builder().securityGroupId("id_test").build())).thenReturn(Mono.just(GetSecurityGroupResponse.builder().metadata(securityGroupResources.get(0).getMetadata()).entity(securityGroupResources.get(0).getEntity()).build()));
+        doThrow(Exception.class).when(securityGroups).delete(DeleteSecurityGroupRequest.builder().securityGroupId("id_test").async(true).build());
+        cloudFoundryService.DelSecurityGurop(securityGroups,"space_id","11.11.11.111");
+    }
+
+    @Test
+    public void SecurityGurop_test6() throws Exception {
+        SecurityGroups securityGroups = mock(SecurityGroups.class, RETURNS_SMART_NULLS);
+        List<SecurityGroupResource> securityGroupResources = new ArrayList<>();
+        securityGroupResources.add(
+                SecurityGroupResource.builder().entity(
+                        SecurityGroupEntity.builder().name("instance_name_space_id").rule(RuleEntity.builder()
+                                .protocol(Protocol.ALL)
+                                .destination("11.11.11.111")
+                                .build()).build()
+                ).metadata(
+                        Metadata.builder().id("id_test").build()
+                ).build()
+        );
+        securityGroupResources.add(
+                SecurityGroupResource.builder().entity(
+                        SecurityGroupEntity.builder().name("instance_name_space_id2").rule(RuleEntity.builder()
+                                .protocol(Protocol.ALL)
+                                .destination("11.11.11.111")
+                                .build()).build()
+                ).metadata(
+                        Metadata.builder().id("id_test").build()
+                ).build()
+        );
+        when(securityGroups.list(ListSecurityGroupsRequest.builder().build())).thenReturn(Mono.just(ListSecurityGroupsResponse.builder().totalPages(2).resources(securityGroupResources).build()));
+        when(securityGroups.update(UpdateSecurityGroupRequest.builder().name("Entity_test").securityGroupId("id_test").rule(RuleEntity.builder()
+                .protocol(Protocol.ALL)
+                .destination("11.11.11.111")
+                .build())
+                .spaceId("space_id").name("instance_name_space_id").build())).thenReturn(Mono.just(UpdateSecurityGroupResponse.builder().build()));
+        List<RuleEntity> ruleEntities = new ArrayList<>();
+        ruleEntities.add(RuleEntity.builder()
+                .protocol(Protocol.ALL)
+                .destination("11.11.11.111")
+                .build());
+        ruleEntities.add(RuleEntity.builder()
+                .protocol(Protocol.ALL)
+                .destination("11.11.11.112")
+                .build());
+        when(securityGroups.get(GetSecurityGroupRequest.builder().securityGroupId("id_test").build())).thenReturn(Mono.just(GetSecurityGroupResponse.builder().metadata(Metadata.builder().id("id_test").build()).entity(SecurityGroupEntity.builder().name("instance_name_space_id").rules(ruleEntities).build()).build()));
+        when(securityGroups.update(UpdateSecurityGroupRequest.builder().name("instance_name_space_id").securityGroupId("id_test").rules(ruleEntities.get(1)).build())).thenReturn(Mono.just(UpdateSecurityGroupResponse.builder().metadata(Metadata.builder().id("id_test").build()).entity(SecurityGroupEntity.builder().name("instance_name_space_id").rule(RuleEntity.builder()
+                .protocol(Protocol.ALL)
+                .destination("11.11.11.112")
+                .build()).build()).build()));
+        cloudFoundryService.DelSecurityGurop(securityGroups,"space_id","11.11.11.111");
+    }
+
+    @Test
+    public void SecurityGurop_test7() throws Exception {
+        SecurityGroups securityGroups = mock(SecurityGroups.class, RETURNS_SMART_NULLS);
+        List<SecurityGroupResource> securityGroupResources = new ArrayList<>();
+        securityGroupResources.add(
+                SecurityGroupResource.builder().entity(
+                        SecurityGroupEntity.builder().name("instance_name_space_id3").rule(RuleEntity.builder()
+                                .protocol(Protocol.ALL)
+                                .destination("11.11.11.111")
+                                .build()).build()
+                ).metadata(
+                        Metadata.builder().id("id_test").build()
+                ).build()
+        );
+        securityGroupResources.add(
+                SecurityGroupResource.builder().entity(
+                        SecurityGroupEntity.builder().name("instance_name_space_id2").rule(RuleEntity.builder()
+                                .protocol(Protocol.ALL)
+                                .destination("11.11.11.111")
+                                .build()).build()
+                ).metadata(
+                        Metadata.builder().id("id_test").build()
+                ).build()
+        );
+        when(securityGroups.list(ListSecurityGroupsRequest.builder().build())).thenReturn(Mono.just(ListSecurityGroupsResponse.builder().totalPages(3).resources(securityGroupResources).build()));
+        when(securityGroups.list(ListSecurityGroupsRequest.builder().page(2).build())).thenReturn(Mono.just(ListSecurityGroupsResponse.builder().totalPages(2).resources(securityGroupResources).build()));
+        when(securityGroups.list(ListSecurityGroupsRequest.builder().page(3).build())).thenReturn(Mono.just(ListSecurityGroupsResponse.builder().totalPages(2).resources(SecurityGroupResource.builder().entity(
+                SecurityGroupEntity.builder().name("instance_name_space_id").rule(RuleEntity.builder()
+                        .protocol(Protocol.ALL)
+                        .destination("11.11.11.111")
+                        .build()).build()
+        ).metadata(
+                Metadata.builder().id("id_test").build()
+        ).build()).build()));
+        when(securityGroups.update(UpdateSecurityGroupRequest.builder().name("Entity_test").securityGroupId("id_test").rule(RuleEntity.builder()
+                .protocol(Protocol.ALL)
+                .destination("11.11.11.111")
+                .build())
+                .spaceId("space_id").name("instance_name_space_id").build())).thenReturn(Mono.just(UpdateSecurityGroupResponse.builder().build()));
+        //DelUpdateSecurityGroup
+        when(securityGroups.get(GetSecurityGroupRequest.builder().securityGroupId("id_test").build())).thenReturn(Mono.just(GetSecurityGroupResponse.builder().metadata(securityGroupResources.get(0).getMetadata()).entity(securityGroupResources.get(0).getEntity()).build()));
+        when(securityGroups.delete(DeleteSecurityGroupRequest.builder().securityGroupId("id_test").async(true).build())).thenReturn(Mono.just(DeleteSecurityGroupResponse.builder().build()));
+
+        cloudFoundryService.DelSecurityGurop(securityGroups,"space_id","11.11.11.111");
+    }
 
 
 
