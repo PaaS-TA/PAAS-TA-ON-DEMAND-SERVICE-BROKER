@@ -285,20 +285,20 @@ public class OnDemandDeploymentServiceTest {
         String result = onDemandDeploymentService.getUpdateInstanceIPS("task_id");
         assertThat(result, is("result"));
     }
-//
-//    //getUpdateInstanceIPS TEST Exception
-//    @Test
-//    public void getUpdateVMInstanceID_test1() throws Exception {
-//        doThrow(Exception.class).when(boshDirector).getUpdateVMInstance("task_id", "instance_name");
-//        String result = onDemandDeploymentService.getUpdateVMInstanceID("task_id", "instance_name");
-//        assertThat(result, is(nullValue()));
-//    }
-//
-//    //getUpdateInstanceIPS TEST
-//    @Test
-//    public void getUpdateVMInstanceID_test2() throws Exception {
-//        when(boshDirector.getUpdateVMInstance("task_id", "instance_name")).thenReturn("result");
-//        String result = onDemandDeploymentService.getUpdateVMInstanceID("task_id", "instance_name");
-//        assertThat(result, is("result"));
-//    }
+
+    //getUpdateInstanceIPS TEST Exception
+    @Test
+    public void getUpdateVMInstanceID_test1() throws Exception {
+        doThrow(Exception.class).when(boshDirector).getUpdateVMInstance("task_id", "instance_name");
+        String result = onDemandDeploymentService.getUpdateVMInstanceID("task_id", "instance_name");
+        assertThat(result, is(nullValue()));
+    }
+
+    //getUpdateInstanceIPS TEST
+    @Test
+    public void getUpdateVMInstanceID_test2() throws Exception {
+        when(boshDirector.getUpdateVMInstance("task_id", "instance_name")).thenReturn("result");
+        String result = onDemandDeploymentService.getUpdateVMInstanceID("task_id", "instance_name");
+        assertThat(result, is("result"));
+    }
 }
