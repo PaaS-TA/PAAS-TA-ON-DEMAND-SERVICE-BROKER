@@ -68,98 +68,98 @@ public class CloudFoundryServiceTest {
         ReflectionTestUtils.setField(cloudFoundryService, "instance_name", "instance_name");
     }
 
-//    @Test
-//    public void ServiceInstanceAppBinding_test() throws Exception {
-//        ServiceBindingsV2 serviceBindingsV2 = mock(ServiceBindingsV2.class, RETURNS_SMART_NULLS);
-//        ApplicationsV2 applicationsV2 = mock(ApplicationsV2.class, RETURNS_SMART_NULLS);
-//        when(serviceBindingsV2.create(CreateServiceBindingRequest.builder().applicationId("test")
-//                .serviceInstanceId("Instance_id").parameters(new HashMap<>()).build())).thenReturn(Mono.just(CreateServiceBindingResponse.builder().metadata(Metadata.builder().id("hello").build()).entity(ServiceBindingEntity.builder().name("test").build()).build()));
-//        when(applicationsV2.restage(RestageApplicationRequest.builder().applicationId("test").build())).thenReturn(Mono.just(RestageApplicationResponse.builder().build()));
-//        cloudFoundryService.ServiceInstanceAppBinding("test","Instance_id" ,new HashMap<>(), serviceBindingsV2, applicationsV2);
-//    }
-//
-//    @Test
-//    public void SecurityGurop_test() throws Exception {
-//        SecurityGroups securityGroups = mock(SecurityGroups.class, RETURNS_SMART_NULLS);
-//        when(securityGroups.list(ListSecurityGroupsRequest.builder().build())).thenReturn(Mono.just(ListSecurityGroupsResponse.builder().totalPages(1).resources(SecurityGroupResource.builder().entity(
-//                SecurityGroupEntity.builder().name("Entity_test").build()
-//        ).metadata(
-//                Metadata.builder().id("id_test").build()
-//        ).build()).build()));
-//        when(securityGroups.create(CreateSecurityGroupRequest.builder().rule(RuleEntity.builder()
-//                .protocol(Protocol.ALL)
-//                .destination("11.11.11.111")
-//                .build())
-//                .spaceId("space_id").name("instance_name_space_id").build())).thenReturn(Mono.just(CreateSecurityGroupResponse.builder().build()));
-//        cloudFoundryService.SecurityGurop("space_id","11.11.11.111", securityGroups);
-//    }
-//
-//    @Test
-//    public void SecurityGurop_test1() throws Exception {
-//        SecurityGroups securityGroups = mock(SecurityGroups.class, RETURNS_SMART_NULLS);
-//        when(securityGroups.list(ListSecurityGroupsRequest.builder().build())).thenReturn(Mono.just(ListSecurityGroupsResponse.builder().totalPages(1).resources(SecurityGroupResource.builder().entity(
-//                SecurityGroupEntity.builder().name("instance_name_space_id").build()
-//        ).metadata(
-//                Metadata.builder().id("id_test").build()
-//        ).build()).build()));
-//        cloudFoundryService.SecurityGurop("space_id","11.11.11.111", securityGroups);
-//    }
-//
-//    @Test
-//    public void SecurityGurop_test2() throws Exception {
-//        SecurityGroups securityGroups = mock(SecurityGroups.class, RETURNS_SMART_NULLS);
-//        List<SecurityGroupResource> securityGroupResources = new ArrayList<>();
-//        securityGroupResources.add(
-//                SecurityGroupResource.builder().entity(
-//                        SecurityGroupEntity.builder().name("Entity_test").build()
-//                ).metadata(
-//                        Metadata.builder().id("id_test").build()
-//                ).build()
-//        );
-//        securityGroupResources.add(
-//                SecurityGroupResource.builder().entity(
-//                        SecurityGroupEntity.builder().name("instance_name_space_id").build()
-//                ).metadata(
-//                        Metadata.builder().id("id_test").build()
-//                ).build()
-//        );
-//        when(securityGroups.list(ListSecurityGroupsRequest.builder().build())).thenReturn(Mono.just(ListSecurityGroupsResponse.builder().totalPages(2).resources( SecurityGroupResource.builder().entity(
-//                SecurityGroupEntity.builder().name("Entity_test").build()
-//        ).metadata(
-//                Metadata.builder().id("id_test").build()
-//        ).build()).build()));
-//        when(securityGroups.list(ListSecurityGroupsRequest.builder().page(2).build())).thenReturn(Mono.just(ListSecurityGroupsResponse.builder().totalPages(2).resources(securityGroupResources).build()));
-//        when(securityGroups.create(CreateSecurityGroupRequest.builder().rule(RuleEntity.builder()
-//                .protocol(Protocol.ALL)
-//                .destination("11.11.11.111")
-//                .build())
-//                .spaceId("space_id").name("instance_name_space_id").build())).thenReturn(Mono.just(CreateSecurityGroupResponse.builder().build()));
-//        cloudFoundryService.SecurityGurop("space_id","11.11.11.111", securityGroups);
-//    }
-//
-//    @Test
-//    public void SecurityGurop_test3() throws Exception {
-//        SecurityGroups securityGroups = mock(SecurityGroups.class, RETURNS_SMART_NULLS);
-//        List<SecurityGroupResource> securityGroupResources = new ArrayList<>();
-//        securityGroupResources.add(
-//                SecurityGroupResource.builder().entity(
-//                        SecurityGroupEntity.builder().name("Entity_test").rule(RuleEntity.builder()
-//                                .protocol(Protocol.ALL)
-//                                .destination("11.11.11.111")
-//                                .build()).build()
-//                ).metadata(
-//                        Metadata.builder().id("id_test").build()
-//                ).build()
-//        );
-//        when(securityGroups.get(GetSecurityGroupRequest.builder().securityGroupId("id_test").build())).thenReturn(Mono.just(GetSecurityGroupResponse.builder().metadata(securityGroupResources.get(0).getMetadata()).entity(securityGroupResources.get(0).getEntity()).build()));
-//        when(securityGroups.update(UpdateSecurityGroupRequest.builder().name("Entity_test").securityGroupId("id_test").rule(RuleEntity.builder()
-//                .protocol(Protocol.ALL)
-//                .destination("11.11.11.111")
-//                .build())
-//                .spaceId("space_id").name("instance_name_space_id").build())).thenReturn(Mono.just(UpdateSecurityGroupResponse.builder().build()));
-//        cloudFoundryService.UpdateSecurityGroup(securityGroups,"11.11.11.111",securityGroupResources);
-//    }
-//
+    @Test
+    public void ServiceInstanceAppBinding_test() throws Exception {
+        ServiceBindingsV2 serviceBindingsV2 = mock(ServiceBindingsV2.class, RETURNS_SMART_NULLS);
+        ApplicationsV2 applicationsV2 = mock(ApplicationsV2.class, RETURNS_SMART_NULLS);
+        when(serviceBindingsV2.create(CreateServiceBindingRequest.builder().applicationId("test")
+                .serviceInstanceId("Instance_id").parameters(new HashMap<>()).build())).thenReturn(Mono.just(CreateServiceBindingResponse.builder().metadata(Metadata.builder().id("hello").build()).entity(ServiceBindingEntity.builder().name("test").build()).build()));
+        when(applicationsV2.restage(RestageApplicationRequest.builder().applicationId("test").build())).thenReturn(Mono.just(RestageApplicationResponse.builder().build()));
+        cloudFoundryService.ServiceInstanceAppBinding("test","Instance_id" ,new HashMap<>(), serviceBindingsV2, applicationsV2);
+    }
+
+    @Test
+    public void SecurityGurop_test() throws Exception {
+        SecurityGroups securityGroups = mock(SecurityGroups.class, RETURNS_SMART_NULLS);
+        when(securityGroups.list(ListSecurityGroupsRequest.builder().build())).thenReturn(Mono.just(ListSecurityGroupsResponse.builder().totalPages(1).resources(SecurityGroupResource.builder().entity(
+                SecurityGroupEntity.builder().name("Entity_test").build()
+        ).metadata(
+                Metadata.builder().id("id_test").build()
+        ).build()).build()));
+        when(securityGroups.create(CreateSecurityGroupRequest.builder().rule(RuleEntity.builder()
+                .protocol(Protocol.ALL)
+                .destination("11.11.11.111")
+                .build())
+                .spaceId("space_id").name("instance_name_space_id").build())).thenReturn(Mono.just(CreateSecurityGroupResponse.builder().build()));
+        cloudFoundryService.SecurityGurop("space_id","11.11.11.111", securityGroups);
+    }
+
+    @Test
+    public void SecurityGurop_test1() throws Exception {
+        SecurityGroups securityGroups = mock(SecurityGroups.class, RETURNS_SMART_NULLS);
+        when(securityGroups.list(ListSecurityGroupsRequest.builder().build())).thenReturn(Mono.just(ListSecurityGroupsResponse.builder().totalPages(1).resources(SecurityGroupResource.builder().entity(
+                SecurityGroupEntity.builder().name("instance_name_space_id").build()
+        ).metadata(
+                Metadata.builder().id("id_test").build()
+        ).build()).build()));
+        cloudFoundryService.SecurityGurop("space_id","11.11.11.111", securityGroups);
+    }
+
+    @Test
+    public void SecurityGurop_test2() throws Exception {
+        SecurityGroups securityGroups = mock(SecurityGroups.class, RETURNS_SMART_NULLS);
+        List<SecurityGroupResource> securityGroupResources = new ArrayList<>();
+        securityGroupResources.add(
+                SecurityGroupResource.builder().entity(
+                        SecurityGroupEntity.builder().name("Entity_test").build()
+                ).metadata(
+                        Metadata.builder().id("id_test").build()
+                ).build()
+        );
+        securityGroupResources.add(
+                SecurityGroupResource.builder().entity(
+                        SecurityGroupEntity.builder().name("instance_name_space_id").build()
+                ).metadata(
+                        Metadata.builder().id("id_test").build()
+                ).build()
+        );
+        when(securityGroups.list(ListSecurityGroupsRequest.builder().build())).thenReturn(Mono.just(ListSecurityGroupsResponse.builder().totalPages(2).resources( SecurityGroupResource.builder().entity(
+                SecurityGroupEntity.builder().name("Entity_test").build()
+        ).metadata(
+                Metadata.builder().id("id_test").build()
+        ).build()).build()));
+        when(securityGroups.list(ListSecurityGroupsRequest.builder().page(2).build())).thenReturn(Mono.just(ListSecurityGroupsResponse.builder().totalPages(2).resources(securityGroupResources).build()));
+        when(securityGroups.create(CreateSecurityGroupRequest.builder().rule(RuleEntity.builder()
+                .protocol(Protocol.ALL)
+                .destination("11.11.11.111")
+                .build())
+                .spaceId("space_id").name("instance_name_space_id").build())).thenReturn(Mono.just(CreateSecurityGroupResponse.builder().build()));
+        cloudFoundryService.SecurityGurop("space_id","11.11.11.111", securityGroups);
+    }
+
+    @Test
+    public void SecurityGurop_test3() throws Exception {
+        SecurityGroups securityGroups = mock(SecurityGroups.class, RETURNS_SMART_NULLS);
+        List<SecurityGroupResource> securityGroupResources = new ArrayList<>();
+        securityGroupResources.add(
+                SecurityGroupResource.builder().entity(
+                        SecurityGroupEntity.builder().name("Entity_test").rule(RuleEntity.builder()
+                                .protocol(Protocol.ALL)
+                                .destination("11.11.11.111")
+                                .build()).build()
+                ).metadata(
+                        Metadata.builder().id("id_test").build()
+                ).build()
+        );
+        when(securityGroups.get(GetSecurityGroupRequest.builder().securityGroupId("id_test").build())).thenReturn(Mono.just(GetSecurityGroupResponse.builder().metadata(securityGroupResources.get(0).getMetadata()).entity(securityGroupResources.get(0).getEntity()).build()));
+        when(securityGroups.update(UpdateSecurityGroupRequest.builder().name("Entity_test").securityGroupId("id_test").rule(RuleEntity.builder()
+                .protocol(Protocol.ALL)
+                .destination("11.11.11.111")
+                .build())
+                .spaceId("space_id").name("instance_name_space_id").build())).thenReturn(Mono.just(UpdateSecurityGroupResponse.builder().build()));
+        cloudFoundryService.UpdateSecurityGroup(securityGroups,"11.11.11.111",securityGroupResources);
+    }
+
 //    @Test
 //    public void SecurityGurop_test4() throws Exception {
 //        SecurityGroups securityGroups = mock(SecurityGroups.class, RETURNS_SMART_NULLS);
