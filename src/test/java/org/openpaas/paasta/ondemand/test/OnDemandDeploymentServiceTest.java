@@ -263,29 +263,29 @@ public class OnDemandDeploymentServiceTest {
 //
 //    }
 //
-//    //createInstance TEST
-//    @Test
-//    public void createInstance_test2() throws Exception {
-//        when(boshDirector.deploy("deployment_name","instance_name")).thenReturn(true);
-//        onDemandDeploymentService.createInstance("deployment_name","instance_name");
-//    }
-//
-//    //getUpdateInstanceIPS TEST Exception
-//    @Test
-//    public void getUpdateInstanceIPS_test1() throws Exception {
-//        doThrow(Exception.class).when(boshDirector).getUpdateVMIPS("task_id");
-//        String result = onDemandDeploymentService.getUpdateInstanceIPS("task_id");
-//        assertThat(result, is(nullValue()));
-//    }
-//
-//    //getUpdateInstanceIPS TEST
-//    @Test
-//    public void getUpdateInstanceIPS_test2() throws Exception {
-//        when(boshDirector.getUpdateVMIPS("task_id")).thenReturn("result");
-//        String result = onDemandDeploymentService.getUpdateInstanceIPS("task_id");
-//        assertThat(result, is("result"));
-//    }
-//
+    //createInstance TEST
+    @Test
+    public void createInstance_test2() throws Exception {
+        when(boshDirector.deploy("deployment_name","instance_name")).thenReturn(true);
+        onDemandDeploymentService.createInstance("deployment_name","instance_name");
+    }
+
+    //getUpdateInstanceIPS TEST Exception
+    @Test
+    public void getUpdateInstanceIPS_test1() throws Exception {
+        doThrow(Exception.class).when(boshDirector).getUpdateVMIPS("task_id");
+        String result = onDemandDeploymentService.getUpdateInstanceIPS("task_id");
+        assertThat(result, is(nullValue()));
+    }
+
+    //getUpdateInstanceIPS TEST
+    @Test
+    public void getUpdateInstanceIPS_test2() throws Exception {
+        when(boshDirector.getUpdateVMIPS("task_id")).thenReturn("result");
+        String result = onDemandDeploymentService.getUpdateInstanceIPS("task_id");
+        assertThat(result, is("result"));
+    }
+
     //getUpdateInstanceIPS TEST Exception
     @Test
     public void getUpdateVMInstanceID_test1() throws Exception {
