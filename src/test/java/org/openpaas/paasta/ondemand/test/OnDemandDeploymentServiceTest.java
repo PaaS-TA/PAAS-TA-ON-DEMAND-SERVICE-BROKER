@@ -143,38 +143,38 @@ public class OnDemandDeploymentServiceTest {
 
 
 
-//    //updateInstanceState TEST
-//    @Test
-//    public void updateInstanceState_test1() throws Exception {
-//        when(boshDirector.updateInstanceState("deployment_name","instance_name","instance_id","type")).thenReturn(true);
-//        onDemandDeploymentService.updateInstanceState("deployment_name","instance_name","instance_id","type");
-//    }
-//
-//    //updateInstanceState TEST
-//    @Test
-//    public void updateInstanceState_test2() throws Exception {
-//         doThrow(Exception.class).when(boshDirector).updateInstanceState("deployment_name","instance_name","instance_id","type");
-//        onDemandDeploymentService.updateInstanceState("deployment_name","instance_name","instance_id","type");
-//    }
-//
-//    //runningTask TEST Exception
-//    @Test
-//    public void runningTask_test1() throws Exception {
-//        JpaServiceInstance jpaServiceInstance = new JpaServiceInstance();
-//        when(boshDirector.getListRunningTasks()).thenReturn(null);
-//        boolean result = onDemandDeploymentService.runningTask("deployment_name",jpaServiceInstance);
-//        assertThat(result, is(false));
-//    }
-//
-//    //runningTask TEST
-//    @Test
-//    public void runningTask_test2() throws Exception {
-//        JpaServiceInstance jpaServiceInstance = new JpaServiceInstance();
-//        when(boshDirector.getListRunningTasks()).thenReturn(new ArrayList<>());
-//        boolean result = onDemandDeploymentService.runningTask("deployment_name",jpaServiceInstance);
-//        assertThat(result, is(true));
-//    }
-//
+    //updateInstanceState TEST
+    @Test
+    public void updateInstanceState_test1() throws Exception {
+        when(boshDirector.updateInstanceState("deployment_name","instance_name","instance_id","type")).thenReturn(true);
+        onDemandDeploymentService.updateInstanceState("deployment_name","instance_name","instance_id","type");
+    }
+
+    //updateInstanceState TEST
+    @Test
+    public void updateInstanceState_test2() throws Exception {
+         doThrow(Exception.class).when(boshDirector).updateInstanceState("deployment_name","instance_name","instance_id","type");
+        onDemandDeploymentService.updateInstanceState("deployment_name","instance_name","instance_id","type");
+    }
+
+    //runningTask TEST Exception
+    @Test
+    public void runningTask_test1() throws Exception {
+        JpaServiceInstance jpaServiceInstance = new JpaServiceInstance();
+        when(boshDirector.getListRunningTasks()).thenReturn(null);
+        boolean result = onDemandDeploymentService.runningTask("deployment_name",jpaServiceInstance);
+        assertThat(result, is(false));
+    }
+
+    //runningTask TEST
+    @Test
+    public void runningTask_test2() throws Exception {
+        JpaServiceInstance jpaServiceInstance = new JpaServiceInstance();
+        when(boshDirector.getListRunningTasks()).thenReturn(new ArrayList<>());
+        boolean result = onDemandDeploymentService.runningTask("deployment_name",jpaServiceInstance);
+        assertThat(result, is(true));
+    }
+
 //    //runningTask TEST
 //    @Test
 //    public void runningTask_test3() throws Exception {
