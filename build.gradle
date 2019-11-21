@@ -57,8 +57,8 @@ dependencies {
     compile files('libs/PAAS-TA-BOSH-API.jar')
     compile group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
     //compile files('libs/PAAS-TA-BOSH-API123.jar')
-    compile ('org.cloudfoundry:cloudfoundry-client-reactor:3.15.0.RELEASE')
-    compile ('io.projectreactor:reactor-core:3.1.8.RELEASE')
+    compile('org.cloudfoundry:cloudfoundry-client-reactor:3.15.0.RELEASE')
+    compile('io.projectreactor:reactor-core:3.1.8.RELEASE')
     testCompile("org.springframework.boot:spring-boot-starter-test")
     testCompile("com.jayway.jsonpath:json-path")
 
@@ -76,7 +76,7 @@ jacoco {
 }
 
 test {
-    ignoreFailures=true
+    ignoreFailures = true
     jacoco {
         destinationFile = file("$buildDir/jacoco/jacoco-overall.exec")
     }
