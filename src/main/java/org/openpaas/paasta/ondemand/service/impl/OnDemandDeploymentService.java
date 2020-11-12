@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +37,23 @@ public class OnDemandDeploymentService {
 
     public List<DeploymentInstance> getVmInstance(String deployment_name, String instance_name) {
         try {
+            logger.info("bosh    version : " + boshDirector.getBosh_version());
             String tasks = boshDirector.getListDetailOfInstances(deployment_name);
             List<DeploymentInstance> deploymentInstances = new ArrayList<DeploymentInstance>();
             Thread.sleep(2000);
-            List<Map> results = boshDirector.getResultRetrieveTasksLog(tasks);
+            //logger.info("before    sleep : S");
+            //Thread.sleep(2000);
+            //logger.info("after     sleep : E" );
+            //logger.info("bosh      tasks : " + tasks);
+
+            //List<Map> results = boshDirector.getResultRetrieveTasksLog(tasks);
+            List<Map> results = null;
+            if (StringUtils.isEmpty(boshDirector.getBosh_version()) || "2700100".compareTo(boshDirector.getBosh_version()) >= 0) {
+                results = boshDirector.getResultRetrieveTasksLog(tasks);
+            }else {
+                results = boshDirector.getResultRetrieveTasksLogv271(tasks);
+            }
+
             for (Map map : results) {
                 if (map.get("job_name").equals(instance_name)) {
                     DeploymentInstance deploymentInstance = new DeploymentInstance(map);
