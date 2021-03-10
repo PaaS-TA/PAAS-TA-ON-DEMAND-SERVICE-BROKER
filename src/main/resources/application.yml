@@ -13,7 +13,7 @@ spring:
   application:
     name: paas-ta-on-demand-broker
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: org.mariadb.jdbc.Driver 
     url: "jdbc:mysql://localhost:3306/on-demand?autoReconnect=true&useUnicode=true&characterEncoding=utf8"
     username: root
     password:
